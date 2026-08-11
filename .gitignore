@@ -1,0 +1,21 @@
+# Dependencies
+node_modules/
+**/node_modules/
+
+# Build outputs
+dist/
+build/
+**/dist/
+
+# Local & environment settings
+.env
+.env.local
+.env.*.local
+*.log
+
+# Temporary Vite & IDE files
+*.timestamp-*.mjs
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
