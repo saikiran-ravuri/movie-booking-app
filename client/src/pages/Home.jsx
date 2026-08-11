@@ -1,9 +1,10 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { Ticket } from 'lucide-react';
 
 function Home() {
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-950 font-sans flex flex-col items-center justify-center p-6 text-center">
+    <div className="min-h-screen bg-slate-50 text-slate-950 font-sans flex flex-col items-center justify-center p-6 text-center select-none">
       <div className="space-y-4 max-w-lg flex flex-col items-center">
         {/* Ticket Icon Badge */}
         <div className="w-12 h-12 rounded-2xl bg-slate-950 flex items-center justify-center text-white shadow-md">
@@ -28,9 +29,12 @@ function Home() {
 
         {/* Login Button with smooth interactive scale effect */}
         <div className="pt-2">
-          <button className="px-6 py-2.5 rounded-lg bg-slate-950 hover:bg-slate-800 text-white text-sm font-semibold transition-all hover:scale-[1.02] active:scale-[0.98] cursor-pointer shadow-sm">
+          <Link
+            to="/login"
+            className="inline-block px-6 py-2.5 rounded-lg bg-slate-950 hover:bg-slate-800 text-white text-sm font-semibold transition-all hover:scale-[1.02] active:scale-[0.98] cursor-pointer shadow-sm"
+          >
             Login
-          </button>
+          </Link>
         </div>
       </div>
     </div>
