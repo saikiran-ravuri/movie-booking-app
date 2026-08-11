@@ -1,5 +1,4 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 import { Ticket } from 'lucide-react';
 
 function Home() {
@@ -26,16 +25,6 @@ function Home() {
         <p className="text-slate-600 text-sm leading-relaxed max-w-md">
           An online platform to browse trending movies, check theatre showtimes, and book your tickets effortlessly.
         </p>
-
-        {/* Login Button with smooth interactive scale effect */}
-        <div className="pt-2">
-          <Link
-            to="/login"
-            className="inline-block px-6 py-2.5 rounded-lg bg-slate-950 hover:bg-slate-800 text-white text-sm font-semibold transition-all hover:scale-[1.02] active:scale-[0.98] cursor-pointer shadow-sm"
-          >
-            Login
-          </Link>
-        </div>
       </div>
     </div>
   );
