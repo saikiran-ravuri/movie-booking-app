@@ -1,13 +1,16 @@
 import React, { useState } from 'react';
 import { Eye, EyeOff, AlertCircle, CheckCircle2 } from 'lucide-react';
 
-function Login() {
+function SignUp() {
   const [formData, setFormData] = useState({
+    name: '',
     email: '',
-    password: ''
+    password: '',
+    confirmPassword: ''
   });
 
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
@@ -19,33 +22,45 @@ function Login() {
     if (successMsg) setSuccessMsg('');
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    setError('');
-    setSuccessMsg('');
-
+  const validateForm = () => {
+    if (!formData.name.trim()) {
+      setError('Please enter your name');
+      return false;
+    }
     if (!formData.email.trim()) {
       setError('Please enter your email address');
-      return;
+      return false;
     }
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(formData.email)) {
       setError('Please enter a valid email address');
-      return;
+      return false;
     }
     if (!formData.password) {
-      setError('Please enter your password');
-      return;
+      setError('Please enter a password');
+      return false;
     }
     if (formData.password.length < 6) {
       setError('Password must be at least 6 characters');
-      return;
+      return false;
     }
+    if (formData.password !== formData.confirmPassword) {
+      setError('Passwords do not match');
+      return false;
+    }
+    return true;
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!validateForm()) return;
 
     setLoading(true);
+    setError('');
+
     setTimeout(() => {
       setLoading(false);
-      setSuccessMsg('Logged in successfully!');
+      setSuccessMsg('Account created successfully!');
     }, 800);
   };
 
@@ -55,7 +70,7 @@ function Login() {
         
         {/* Perfectly Proportioned Title Heading */}
         <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-950 leading-tight text-center">
-          Login
+          Sign Up
         </h1>
 
         {/* Error Alert */}
@@ -77,7 +92,23 @@ function Login() {
         {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
           
-          {/* Email Field */}
+          {/* Name Field */}
+          <div>
+            <label className="block text-xs font-semibold text-slate-700 mb-1">
+              Name
+            </label>
+            <input
+              type="text"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+              placeholder="name"
+              disabled={loading}
+              className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-950 placeholder-slate-400 focus:outline-none focus:bg-white focus:border-slate-950"
+            />
+          </div>
+
+          {/* Email Address Field */}
           <div>
             <label className="block text-xs font-semibold text-slate-700 mb-1">
               Email Address
@@ -95,18 +126,9 @@ function Login() {
 
           {/* Password Field */}
           <div>
-            <div className="flex items-center justify-between mb-1">
-              <label className="block text-xs font-semibold text-slate-700">
-                Password
-              </label>
-              <a
-                href="#forgot"
-                onClick={(e) => e.preventDefault()}
-                className="text-xs text-red-600 hover:underline font-medium cursor-pointer"
-              >
-                Forgot password?
-              </a>
-            </div>
+            <label className="block text-xs font-semibold text-slate-700 mb-1">
+              Password
+            </label>
             <div className="relative">
               <input
                 type={showPassword ? 'text' : 'password'}
@@ -128,6 +150,32 @@ function Login() {
             </div>
           </div>
 
+          {/* Confirm Password Field */}
+          <div>
+            <label className="block text-xs font-semibold text-slate-700 mb-1">
+              Confirm Password
+            </label>
+            <div className="relative">
+              <input
+                type={showConfirmPassword ? 'text' : 'password'}
+                name="confirmPassword"
+                value={formData.confirmPassword}
+                onChange={handleChange}
+                placeholder="••••••••"
+                disabled={loading}
+                className="w-full pl-3.5 pr-10 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-950 placeholder-slate-400 focus:outline-none focus:bg-white focus:border-slate-950"
+              />
+              <button
+                type="button"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600 cursor-pointer"
+                tabIndex="-1"
+              >
+                {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+              </button>
+            </div>
+          </div>
+
           {/* Submit Button */}
           <div className="pt-2">
             <button
@@ -135,20 +183,20 @@ function Login() {
               disabled={loading}
               className="w-full py-2.5 rounded-lg bg-slate-950 hover:bg-slate-800 text-white text-sm font-semibold transition-all hover:scale-[1.02] active:scale-[0.98] cursor-pointer shadow-sm disabled:opacity-60"
             >
-              {loading ? 'Processing...' : 'Login'}
+              {loading ? 'Processing...' : 'Sign Up'}
             </button>
           </div>
         </form>
 
-        {/* Sign Up Option */}
+        {/* Login Option */}
         <div className="text-center text-xs text-slate-600 pt-1">
-          Don't have an account?{' '}
+          Already have an account?{' '}
           <a
-            href="#signup"
+            href="#login"
             onClick={(e) => e.preventDefault()}
             className="font-semibold text-slate-950 hover:underline cursor-pointer"
           >
-            Sign Up
+            Login
           </a>
         </div>
 
@@ -157,4 +205,4 @@ function Login() {
   );
 }
 
-export default Login;
+export default SignUp;
