@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { LoginUser } from '../api/users';
+import { LoginUser } from '../../api/users';
 
 import { Eye, EyeOff, AlertCircle, CheckCircle2 } from 'lucide-react';
 
@@ -55,11 +55,15 @@ function Login({ isModal = false, onCloseModal, onSwitchToSignUp, onSwitchToForg
 
       if (response.success) {
         setSuccessMsg(response.message);
-        // navigate to home page and close modal on success
+        // save logged-in user name in localStorage
+        if (response.data) {
+          localStorage.setItem('userName', response.data);
+        }
+        // fast smooth redirect on login success
         setTimeout(() => {
           if (onCloseModal) onCloseModal();
-          navigate('/');
-        }, 1000);
+          navigate('/main-home');
+        }, 300);
       } else {
         setError(response.message);
       }
@@ -132,7 +136,6 @@ function Login({ isModal = false, onCloseModal, onSwitchToSignUp, onSwitchToForg
               value={formData.password}
               onChange={handleChange}
               placeholder="••••••••"
-              autoComplete="current-password"
               disabled={loading}
               className="w-full pl-3.5 pr-10 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-950 placeholder-slate-400 focus:outline-none focus:bg-white focus:border-slate-950"
             />

@@ -61,6 +61,7 @@ const login = async (req, res) => {
         res.send({
             success: true,
             message: 'User logged in successfully',
+            data: user.name
         });
     } catch (err) {
         // send error response if something fails

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { RegisterUser } from '../api/users';
+import { RegisterUser } from '../../api/users';
 
 import { Eye, EyeOff, AlertCircle, CheckCircle2 } from 'lucide-react';
 
@@ -69,11 +69,11 @@ function Register({ isModal = false, onSwitchToLogin }) {
 
       if (response.success) {
         setSuccessMsg(response.message);
-        // navigate to login after registration success
+        // fast smooth redirect on registration success
         setTimeout(() => {
           if (onSwitchToLogin) onSwitchToLogin();
           else navigate('/login');
-        }, 1000);
+        }, 500);
       } else {
         setError(response.message);
       }
@@ -154,7 +154,6 @@ function Register({ isModal = false, onSwitchToLogin }) {
               value={formData.password}
               onChange={handleChange}
               placeholder="••••••••"
-              autoComplete="new-password"
               disabled={loading}
               className="w-full pl-3.5 pr-10 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-950 placeholder-slate-400 focus:outline-none focus:bg-white focus:border-slate-950"
             />
@@ -181,7 +180,6 @@ function Register({ isModal = false, onSwitchToLogin }) {
               value={formData.confirmPassword}
               onChange={handleChange}
               placeholder="••••••••"
-              autoComplete="new-password"
               disabled={loading}
               className="w-full pl-3.5 pr-10 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-950 placeholder-slate-400 focus:outline-none focus:bg-white focus:border-slate-950"
             />

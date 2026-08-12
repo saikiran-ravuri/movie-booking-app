@@ -19,3 +19,8 @@ build/
 Thumbs.db
 .vscode/
 .idea/
+
+# Postman local workspace folders
+.postman/
+postman/
+
