@@ -1,7 +1,11 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { RegisterUser } from '../api/users';
+
 import { Eye, EyeOff, AlertCircle, CheckCircle2 } from 'lucide-react';
 
-function SignUp({ isModal = false, onSwitchToLogin }) {
+function Register({ isModal = false, onSwitchToLogin }) {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -51,18 +55,34 @@ function SignUp({ isModal = false, onSwitchToLogin }) {
     return true;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm()) return;
 
     setLoading(true);
     setError('');
 
-    setTimeout(() => {
+    try {
+      // call backend register api
+      const response = await RegisterUser(formData);
       setLoading(false);
-      setSuccessMsg('Account created successfully!');
-    }, 800);
+
+      if (response.success) {
+        setSuccessMsg(response.message);
+        // navigate to login after registration success
+        setTimeout(() => {
+          if (onSwitchToLogin) onSwitchToLogin();
+          else navigate('/login');
+        }, 1000);
+      } else {
+        setError(response.message);
+      }
+    } catch (err) {
+      setLoading(false);
+      setError(err.message);
+    }
   };
+
 
   const formContent = (
     <div className="w-full space-y-5">
@@ -89,7 +109,7 @@ function SignUp({ isModal = false, onSwitchToLogin }) {
 
       {/* Form */}
       <form onSubmit={handleSubmit} className="space-y-4">
-        
+
         {/* Name Field */}
         <div>
           <label className="block text-xs font-semibold text-slate-700 mb-1">
@@ -134,6 +154,7 @@ function SignUp({ isModal = false, onSwitchToLogin }) {
               value={formData.password}
               onChange={handleChange}
               placeholder="••••••••"
+              autoComplete="new-password"
               disabled={loading}
               className="w-full pl-3.5 pr-10 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-950 placeholder-slate-400 focus:outline-none focus:bg-white focus:border-slate-950"
             />
@@ -160,6 +181,7 @@ function SignUp({ isModal = false, onSwitchToLogin }) {
               value={formData.confirmPassword}
               onChange={handleChange}
               placeholder="••••••••"
+              autoComplete="new-password"
               disabled={loading}
               className="w-full pl-3.5 pr-10 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-950 placeholder-slate-400 focus:outline-none focus:bg-white focus:border-slate-950"
             />
@@ -211,4 +233,4 @@ function SignUp({ isModal = false, onSwitchToLogin }) {
   );
 }
 
-export default SignUp;
+export default Register;
