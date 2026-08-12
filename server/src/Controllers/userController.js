@@ -1,5 +1,6 @@
 const User = require('../Models/userModel');
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
 // register user controller
 const register = async (req, res) => {
@@ -7,7 +8,7 @@ const register = async (req, res) => {
         // check if user already exists in database
         const userExists = await User.findOne({ email: req.body.email });
         if (userExists) {
-            return res.send({
+            return res.status(400).send({
                 success: false,
                 message: 'User already exists',
             });
@@ -22,14 +23,14 @@ const register = async (req, res) => {
         const newUser = new User(req.body);
         await newUser.save();
 
-        // send success response
-        res.send({
+        // send success response with 201 created status
+        res.status(201).send({
             success: true,
             message: 'User created successfully',
         });
     } catch (err) {
-        // send error response if something fails
-        res.send({
+        // send error response with 500 server error status
+        res.status(500).send({
             success: false,
             message: err.message,
         });
@@ -42,7 +43,7 @@ const login = async (req, res) => {
         // find user by email in database
         const user = await User.findOne({ email: req.body.email });
         if (!user) {
-            return res.send({
+            return res.status(404).send({
                 success: false,
                 message: 'User does not exist',
             });
@@ -51,21 +52,30 @@ const login = async (req, res) => {
         // check if entered password matches database hash
         const validPassword = await bcrypt.compare(req.body.password, user.password);
         if (!validPassword) {
-            return res.send({
+            return res.status(400).send({
                 success: false,
                 message: 'Invalid password',
             });
         }
 
-        // send success response
-        res.send({
+        // generate jwt token containing user id signed with secret key
+        const token = jwt.sign(
+            { userId: user._id },
+            process.env.jwt_secret,
+            { expiresIn: '1d' }
+        );
+
+        // send success response with token and user name
+        return res.status(200).send({
             success: true,
-            message: 'User logged in successfully',
-            data: user.name
+            message: `User ${user.name} login successful`,
+            accessToken: token,
+            userName: user.name
         });
+
     } catch (err) {
-        // send error response if something fails
-        res.send({
+        // send error response with 500 server error status
+        res.status(500).send({
             success: false,
             message: err.message,
         });

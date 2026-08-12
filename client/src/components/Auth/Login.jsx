@@ -28,6 +28,7 @@ function Login({ isModal = false, onCloseModal, onSwitchToSignUp, onSwitchToForg
     setError('');
     setSuccessMsg('');
 
+    // client side validation
     if (!formData.email.trim()) {
       setError('Please enter your email address');
       return;
@@ -55,10 +56,17 @@ function Login({ isModal = false, onCloseModal, onSwitchToSignUp, onSwitchToForg
 
       if (response.success) {
         setSuccessMsg(response.message);
-        // save logged-in user name in localStorage
-        if (response.data) {
-          localStorage.setItem('userName', response.data);
+
+        // save jwt access token and user name in local storage
+        const accessToken = response.accessToken || response.accesstoken || response.data || response.token;
+        if (accessToken) {
+          localStorage.setItem('accessToken', accessToken);
+          localStorage.setItem('token', accessToken);
         }
+        if (response.userName) {
+          localStorage.setItem('userName', response.userName);
+        }
+
         // fast smooth redirect on login success
         setTimeout(() => {
           if (onCloseModal) onCloseModal();

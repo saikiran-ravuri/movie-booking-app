@@ -29,7 +29,7 @@ function Navbar({ username = 'User' }) {
 
   return (
     <header className="w-full bg-white border-b border-slate-200/80 px-6 py-3.5 flex items-center justify-between shadow-sm select-none">
-      
+
       {/* Brand Logo */}
       <div className="flex items-center gap-3">
         <div className="relative w-10 h-10 rounded-xl bg-slate-950 border border-slate-800 flex items-center justify-center text-white shadow-sm">
@@ -43,7 +43,7 @@ function Navbar({ username = 'User' }) {
 
       {/* Profile Dropdown Container */}
       <div className="relative" ref={dropdownRef}>
-        
+
         {/* Profile Button Trigger - Displaying Full User Name */}
         <button
           type="button"
