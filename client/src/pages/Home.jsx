@@ -14,7 +14,7 @@ function Home() {
   return (
     <div className="min-h-screen bg-slate-50 text-slate-950 font-sans flex flex-col items-center justify-center p-6 text-center select-none">
       <div className="space-y-5 max-w-lg flex flex-col items-center">
-        
+
         {/* Clean Cinema Emblem Logo */}
         <div className="relative w-16 h-16 rounded-2xl bg-slate-950 border border-slate-800 flex items-center justify-center text-white shadow-md">
           <Clapperboard className="w-8 h-8 text-red-500 stroke-[1.75]" />
