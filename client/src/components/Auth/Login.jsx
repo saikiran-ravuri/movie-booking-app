@@ -61,7 +61,6 @@ function Login({ isModal = false, onCloseModal, onSwitchToSignUp, onSwitchToForg
         const accessToken = response.accessToken || response.accesstoken || response.data || response.token;
         if (accessToken) {
           localStorage.setItem('accessToken', accessToken);
-          localStorage.setItem('token', accessToken);
         }
         if (response.userName) {
           localStorage.setItem('userName', response.userName);

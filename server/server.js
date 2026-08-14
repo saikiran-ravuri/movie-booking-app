@@ -4,6 +4,7 @@ const express = require('express');
 const cors = require('cors');
 const dbConfig = require('./src/Config/dbConfig');
 const userRoute = require('./src/Routes/userRoute');
+const movieRoute = require('./src/Routes/movieRoute');
 
 const app = express();
 
@@ -13,7 +14,9 @@ app.use(express.json());
 
 // user api routes
 app.use('/api/users', userRoute);
-app.use('/users', userRoute);
+
+// movie api routes
+app.use('/api/movies', movieRoute);
 
 // test route
 app.get('/', (req, res) => {
