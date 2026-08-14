@@ -5,12 +5,21 @@ const jwt = require('jsonwebtoken');
 // register user controller
 const register = async (req, res) => {
     try {
-        // check if user already exists in database
-        const userExists = await User.findOne({ email: req.body.email });
-        if (userExists) {
+        // check if user with email already exists in database
+        const emailExists = await User.findOne({ email: req.body.email });
+        if (emailExists) {
             return res.status(400).send({
                 success: false,
-                message: 'User already exists',
+                message: 'User with this email already exists',
+            });
+        }
+
+        // check if user with name already exists in database
+        const nameExists = await User.findOne({ name: req.body.name });
+        if (nameExists) {
+            return res.status(400).send({
+                success: false,
+                message: 'User with this name already exists',
             });
         }
 
@@ -61,16 +70,17 @@ const login = async (req, res) => {
         // generate jwt token containing user id signed with secret key
         const token = jwt.sign(
             { userId: user._id },
-            process.env.jwt_secret,
+            process.env.jwt_secret || process.env.SECRET_KEY,
             { expiresIn: '1d' }
         );
 
-        // send success response with token and user name
+        // send success response with token, user name, and role
         return res.status(200).send({
             success: true,
             message: `User ${user.name} login successful`,
             accessToken: token,
-            userName: user.name
+            userName: user.name,
+            role: user.role || 'user'
         });
 
     } catch (err) {
@@ -82,7 +92,31 @@ const login = async (req, res) => {
     }
 };
 
+// get current logged in user details controller (excluding password)
+const getCurrentUser = async (req, res) => {
+    try {
+        const user = await User.findById(req.body.userId).select('-password');
+        if (!user) {
+            return res.status(404).send({
+                success: false,
+                message: 'User not found',
+            });
+        }
+        res.status(200).send({
+            success: true,
+            message: 'User details fetched successfully',
+            data: user,
+        });
+    } catch (err) {
+        res.status(500).send({
+            success: false,
+            message: err.message,
+        });
+    }
+};
+
 module.exports = {
     register,
     login,
+    getCurrentUser,
 };

@@ -7,19 +7,20 @@ const userRoute = require('./src/Routes/userRoute');
 
 const app = express();
 
-// Middleware
+// middleware configuration
 app.use(cors());
 app.use(express.json());
 
-// API Routes
+// user api routes
 app.use('/api/users', userRoute);
+app.use('/users', userRoute);
 
-// Test Route
+// test route
 app.get('/', (req, res) => {
     res.send('Movie Booking Server is Running!');
 });
 
-// Port & Server Listener
+// port configuration and server listener
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {

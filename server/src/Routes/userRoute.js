@@ -1,10 +1,25 @@
 const router = require('express').Router();
-const { register, login } = require('../Controllers/userController');
+const { register, login, getCurrentUser } = require('../Controllers/userController');
+const { verifyToken, verifyAdmin } = require('../Middlewares/authMiddleware');
 
-// user register route
-router.post('/register', register);
+// user register route (supports POST and GET)
+router.route('/register').post(register).get(register);
 
-// user login route
-router.post('/login', login);
+// user login route (supports POST and GET)
+router.route('/login').post(login).get(login);
+
+// protected route to fetch current logged in user details using verifyToken authMiddleware
+router.get('/get-current-user', verifyToken, getCurrentUser);
+
+// protected admin route to test verifyAdmin authorization middleware (returns only success and message)
+const adminHandler = (req, res) => {
+    res.status(200).send({
+        success: true,
+        message: `Welcome Admin ${req.userDetails ? req.userDetails.name : ''}! Authorization verified successfully.`
+    });
+};
+
+router.get('/admin-test', [verifyToken, verifyAdmin], adminHandler);
+router.post('/admin-test', [verifyToken, verifyAdmin], adminHandler);
 
 module.exports = router;
