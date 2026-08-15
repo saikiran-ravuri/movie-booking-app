@@ -2,6 +2,7 @@ import React from 'react';
 import Navbar from '../components/mainhome/Navbar';
 import Footer from '../components/mainhome/Footer';
 import MovieInfo from '../components/moviedetails/MovieInfo';
+import Shows from '../components/moviedetails/Shows';
 
 function MovieDetails() {
   return (
@@ -12,6 +13,9 @@ function MovieDetails() {
 
       {/* Movie Details Info Component */}
       <MovieInfo />
+
+      {/* Shows Component */}
+      <Shows />
 
       {/* Footer Component */}
       <Footer />

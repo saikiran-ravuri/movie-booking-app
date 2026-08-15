@@ -34,7 +34,7 @@ function MovieList() {
     const todayDate = new Date().toISOString().split("T")[0];
 
     return (
-        <section id="recommended-movies" className="pt-8 sm:pt-12 pb-8 sm:pb-12 bg-slate-50 select-none">
+        <section id="recommended-movies" className="pt-8 sm:pt-12 pb-0 bg-slate-50 select-none">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
                 {/* Clean Section Header */}

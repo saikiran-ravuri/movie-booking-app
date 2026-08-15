@@ -63,22 +63,23 @@ function Navbar({ username = 'User' }) {
   // Filter movies matching current search query
   const searchResults = searchQuery.trim()
     ? allMovies.filter((movie) => {
-        const query = searchQuery.trim().toLowerCase();
-        return (
-          movie.movieName?.toLowerCase().includes(query) ||
-          movie.language?.toLowerCase().includes(query) ||
-          (Array.isArray(movie.genre) && movie.genre.some((g) => g.toLowerCase().includes(query)))
-        );
-      })
+      const query = searchQuery.trim().toLowerCase();
+      return (
+        movie.movieName?.toLowerCase().includes(query) ||
+        movie.language?.toLowerCase().includes(query) ||
+        (Array.isArray(movie.genre) && movie.genre.some((g) => g.toLowerCase().includes(query)))
+      );
+    })
     : [];
 
   return (
     <header className="w-full bg-white border-b border-slate-200/80 px-6 py-3 flex items-center justify-between shadow-xs select-none">
-      
+
       {/* Brand Logo & Title */}
       <Link to="/main-home" className="flex items-center gap-3 hover:opacity-90 transition-opacity shrink-0">
-        <div className="w-9 h-9 rounded-xl bg-slate-950 flex items-center justify-center text-white shadow-sm">
-          <Clapperboard className="w-5 h-5 text-red-500" />
+        <div className="relative w-9 h-9 rounded-xl bg-slate-950 flex items-center justify-center text-white shadow-sm shrink-0">
+          <Clapperboard className="w-5 h-5 text-white stroke-[1.75]" />
+          <Film className="w-2.5 h-2.5 text-white absolute bottom-1 right-1 opacity-80" />
         </div>
         <span className="text-base font-bold tracking-tight text-slate-950">
           Movie Booking Application
@@ -115,14 +116,14 @@ function Navbar({ username = 'User' }) {
                 >
                   {/* Small Poster */}
                   <div className="w-6 h-8 rounded bg-slate-100 overflow-hidden shrink-0">
-                    <img 
-                      src={movie.poster} 
-                      alt={movie.movieName} 
+                    <img
+                      src={movie.poster}
+                      alt={movie.movieName}
                       onError={(e) => {
                         e.target.onerror = null;
                         e.target.src = "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=500&q=80";
                       }}
-                      className="w-full h-full object-cover" 
+                      className="w-full h-full object-cover"
                     />
                   </div>
 

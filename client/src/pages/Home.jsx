@@ -17,7 +17,7 @@ function Home() {
 
         {/* Clean Cinema Emblem Logo */}
         <div className="relative w-16 h-16 rounded-2xl bg-slate-950 border border-slate-800 flex items-center justify-center text-white shadow-md">
-          <Clapperboard className="w-8 h-8 text-red-500 stroke-[1.75]" />
+          <Clapperboard className="w-8 h-8 text-white stroke-[1.75]" />
           <Film className="w-4 h-4 text-white absolute bottom-2 right-2 opacity-80" />
         </div>
 

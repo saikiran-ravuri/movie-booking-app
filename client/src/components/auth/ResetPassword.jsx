@@ -74,7 +74,7 @@ function ResetPassword({ isModal = false, onSwitchToLogin }) {
 
       {/* Form */}
       <form onSubmit={handleSubmit} className="space-y-4">
-        
+
         {/* New Password Field */}
         <div>
           <label className="block text-xs font-semibold text-slate-700 mb-1">
