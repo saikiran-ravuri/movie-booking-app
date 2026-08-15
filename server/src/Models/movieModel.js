@@ -33,6 +33,6 @@ const movieSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 // create movie model from schema
-const MovieModel = mongoose.model("movies_scalerAug25", movieSchema);
+const MovieModel = mongoose.model("Movies", movieSchema);
 
 module.exports = MovieModel;

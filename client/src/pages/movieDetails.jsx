@@ -1,21 +1,17 @@
 import React from 'react';
 import Navbar from '../components/mainhome/Navbar';
-import Hero from '../components/mainhome/Hero';
-import MovieList from '../components/movies/MovieList';
 import Footer from '../components/mainhome/Footer';
+import MovieInfo from '../components/moviedetails/MovieInfo';
 
-function MainHome() {
+function MovieDetails() {
   return (
     <div className="min-h-screen bg-slate-50 text-slate-950 font-sans flex flex-col justify-between select-none">
       
       {/* Navbar Component */}
       <Navbar />
 
-      {/* Hero / Main Content */}
-      <Hero />
-      
-      {/* MovieList Component */}
-      <MovieList />
+      {/* Movie Details Info Component */}
+      <MovieInfo />
 
       {/* Footer Component */}
       <Footer />
@@ -24,4 +20,4 @@ function MainHome() {
   );
 }
 
-export default MainHome;
+export default MovieDetails;

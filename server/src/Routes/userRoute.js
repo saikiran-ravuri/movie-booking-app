@@ -2,11 +2,11 @@ const router = require('express').Router();
 const { register, login, getCurrentUser } = require('../Controllers/userController');
 const { verifyToken, verifyAdmin } = require('../Middlewares/authMiddleware');
 
-// user register route (supports POST and GET)
-router.route('/register').post(register).get(register);
+// user register route (POST only)
+router.post('/register', register);
 
-// user login route (supports POST and GET)
-router.route('/login').post(login).get(login);
+// user login route (POST only)
+router.post('/login', login);
 
 // protected route to fetch current logged in user details using verifyToken authMiddleware
 router.get('/get-current-user', verifyToken, getCurrentUser);

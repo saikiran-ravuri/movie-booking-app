@@ -1,16 +1,15 @@
 const jwt = require("jsonwebtoken");
-const User = require("../Models/userModel");
+const UserModel = require("../Models/userModel");
 
-// verify jwt authentication token middleware
 const verifyToken = (req, res, next) => {
-    // fetch token from header (supports x-access-token and authorization header)
-    const token = req.headers['x-access-token'] || (req.headers.authorization && req.headers.authorization.split(' ')[1]) || req.headers.authorization;
+    // fetch the token from header (x-access-token or Authorization Bearer)
+    const token = req.headers['x-access-token'] || (req.headers.authorization && req.headers.authorization.split(' ')[1]);
 
     if (!token) {
         return res.status(400).send({ success: false, message: "JWT token is not passed" });
     }
 
-    // token is present, verify using secret key
+    // verify token with secret key
     const secretKey = process.env.jwt_secret || process.env.SECRET_KEY;
     jwt.verify(token, secretKey, async (err, payload) => {
         if (err) {
@@ -20,29 +19,24 @@ const verifyToken = (req, res, next) => {
         const userId = payload.userId;
 
         try {
-            const userDetails = await User.findById(userId);
+            const userDetails = await UserModel.findById(userId);
+            if (!userDetails) {
+                return res.status(404).send({ success: false, message: "User account no longer exists" });
+            }
             req.userDetails = userDetails;
             req.body.userId = userId;
             next();
         } catch (err) {
-            return res.status(500).send({ message: "Internal Server Error" });
+            return res.status(500).send({ success: false, message: "Internal Server Error" });
         }
     });
 };
 
-// verify admin authorization middleware
 const verifyAdmin = (req, res, next) => {
-    // safely assume person is authenticated
-    const role = req.userDetails && req.userDetails.role;
-    const userName = req.userDetails ? (req.userDetails.name || req.userDetails._id) : '';
-
-    if (role !== 'admin') {
-        return res.status(403).send({
-            success: false,
-            message: `User ${userName} is not authorised to access this route`
-        });
+    if (!req.userDetails || req.userDetails.role !== 'admin') {
+        const userId = req.userDetails ? req.userDetails._id : 'unknown';
+        return res.status(403).send({ success: false, message: `User with id ${userId} is not authorised to access this route` });
     }
-
     next();
 };
 

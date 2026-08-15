@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Clapperboard, Film } from 'lucide-react';
-import AuthModal from '../components/Auth/AuthModal.jsx';
+import AuthModal from '../components/auth/AuthModal';
 
 function Home() {
   const [isAuthOpen, setIsAuthOpen] = useState(false);

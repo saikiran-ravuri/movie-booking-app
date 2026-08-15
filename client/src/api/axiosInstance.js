@@ -1,18 +1,16 @@
 import axios from 'axios';
 
-// create axios instance to talk to backend
 export const axiosInstance = axios.create({
     headers: {
         'Content-Type': 'application/json',
     },
 });
 
-// attach request interceptor to auto send bearer jwt token in headers
+// attach x-access-token header to requests
 axiosInstance.interceptors.request.use((config) => {
-    // get access token from local storage
-    const token = localStorage.getItem('accessToken') || localStorage.getItem('token');
+    const token = localStorage.getItem('accessToken');
     if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
+        config.headers['x-access-token'] = token;
     }
     return config;
 });
