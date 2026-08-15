@@ -6,6 +6,7 @@ const dbConfig = require('./src/Config/dbConfig');
 const userRoute = require('./src/Routes/userRoute');
 const movieRoute = require('./src/Routes/movieRoute');
 const theatreRoute = require('./src/Routes/theatreRoute');
+const showRoute = require('./src/Routes/showRoute');
 
 const app = express();
 
@@ -21,6 +22,9 @@ app.use('/api/movies', movieRoute);
 
 // theatre api routes
 app.use('/api/theatres', theatreRoute);
+
+// show api routes
+app.use('/api/shows', showRoute);
 
 // test route
 app.get('/', (req, res) => {
