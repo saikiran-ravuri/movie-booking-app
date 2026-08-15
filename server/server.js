@@ -5,6 +5,7 @@ const cors = require('cors');
 const dbConfig = require('./src/Config/dbConfig');
 const userRoute = require('./src/Routes/userRoute');
 const movieRoute = require('./src/Routes/movieRoute');
+const theatreRoute = require('./src/Routes/theatreRoute');
 
 const app = express();
 
@@ -17,6 +18,9 @@ app.use('/api/users', userRoute);
 
 // movie api routes
 app.use('/api/movies', movieRoute);
+
+// theatre api routes
+app.use('/api/theatres', theatreRoute);
 
 // test route
 app.get('/', (req, res) => {
