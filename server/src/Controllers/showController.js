@@ -97,7 +97,6 @@ const getShowById = async (req, res) => {
 const getTheatesAndShowsByMovieId = async (req, res) => {
     try {
         const movieId = req.params.movieId;
-        const showDate = req.query.showDate;
 
         if (!mongoose.Types.ObjectId.isValid(movieId)) {
             return res.status(400).send({
@@ -106,20 +105,8 @@ const getTheatesAndShowsByMovieId = async (req, res) => {
             });
         }
 
-        const movieObj = await MovieModel.findById(movieId);
-        if (movieObj == null) {
-            return res.status(400).send({
-                success: false,
-                message: "movie Id is invalid",
-            });
-        }
-
-        const query = { movie: movieId };
-        if (showDate) {
-            query.showDate = showDate;
-        }
-
-        const allShows = await ShowModel.find(query).populate('theatre').populate('movie');
+        // Fetch all shows for this movie so all theaters & showtimes render for all dates!
+        const allShows = await ShowModel.find({ movie: movieId }).populate('theatre').populate('movie');
 
         let showsByTheatreId = {};
 

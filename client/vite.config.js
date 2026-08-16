@@ -7,6 +7,9 @@ export default defineConfig({
     react(),
     tailwindcss()
   ],
+  define: {
+    'process.env.REACT_APP_BACKEND_URL': JSON.stringify('http://localhost:5000/api'),
+  },
   server: {
     port: 3000,
     proxy: {
