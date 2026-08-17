@@ -29,3 +29,28 @@ export const GetLoggedInUser = async () => {
         return err.response ? err.response.data : { success: false, message: err.message };
     }
 };
+
+// forget password user api call
+export const ForgetPasswordAPI = async (data) => {
+    try {
+        const response = await axiosInstance.post('/api/users/forget', data);
+        return response.data;
+    } catch (err) {
+        console.log(err);
+        return err.response ? err.response.data : { success: false, message: err.message };
+    }
+};
+
+// reset password user api call
+export const ResetPasswordAPI = async (data) => {
+    try {
+        const response = await axiosInstance.post('/api/users/reset', data);
+        return response.data;
+    } catch (err) {
+        console.log(err);
+        return err.response ? err.response.data : { success: false, message: err.message };
+    }
+};
+
+export const ForgetPasswordUser = ForgetPasswordAPI;
+export const ResetPasswordUser = ResetPasswordAPI;

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { X } from 'lucide-react';
 import Login from './Login.jsx';
 import Register from './Register.jsx';
+import ForgotPassword from './ForgotPassword.jsx';
 import ResetPassword from './ResetPassword.jsx';
 
 function AuthModal({ isOpen, onClose, initialView = 'login' }) {
@@ -34,7 +35,7 @@ function AuthModal({ isOpen, onClose, initialView = 'login' }) {
             isModal={true}
             onCloseModal={onClose}
             onSwitchToSignUp={() => setAuthView('signup')}
-            onSwitchToForgot={() => setAuthView('reset')}
+            onSwitchToForgot={() => setAuthView('forget')}
           />
         )}
 
@@ -45,9 +46,19 @@ function AuthModal({ isOpen, onClose, initialView = 'login' }) {
           />
         )}
 
+        {authView === 'forget' && (
+          <ForgotPassword
+            isModal={true}
+            onCloseModal={onClose}
+            onSwitchToLogin={() => setAuthView('login')}
+            onSwitchToReset={() => setAuthView('reset')}
+          />
+        )}
+
         {authView === 'reset' && (
           <ResetPassword
             isModal={true}
+            onCloseModal={onClose}
             onSwitchToLogin={() => setAuthView('login')}
           />
         )}

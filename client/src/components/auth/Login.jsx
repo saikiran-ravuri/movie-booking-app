@@ -130,7 +130,7 @@ function Login({ isModal = false, onCloseModal, onSwitchToSignUp, onSwitchToForg
             </label>
             <button
               type="button"
-              onClick={onSwitchToForgot}
+              onClick={onSwitchToForgot ? onSwitchToForgot : () => navigate('/forget')}
               className="text-xs text-red-600 hover:underline font-medium cursor-pointer"
             >
               Forgot password?
