@@ -56,7 +56,8 @@ function Navbar({ username = 'User' }) {
   const handleLogout = () => {
     setIsDropdownOpen(false);
     localStorage.removeItem('userName');
-    localStorage.removeItem('token');
+    localStorage.removeItem('userEmail');
+    localStorage.removeItem('accessToken');
     navigate('/');
   };
 
