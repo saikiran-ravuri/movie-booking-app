@@ -1,14 +1,20 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { MapPin } from 'lucide-react';
-import { parseShowTimeToMinutes } from '../../utils/showUtils';
+import { parseShowTimeToMinutes, isShowTimePassed } from '../../utils/showUtils';
 
-function Showcard({ theatreShows }) {
+function Showcard({ theatreShows, date }) {
   if (!theatreShows || theatreShows.length === 0) return null;
-  const theatreDetails = theatreShows[0].theatre || {};
 
-  // Sort showtimes chronologically by showTime
-  const sortedShows = [...theatreShows].sort((a, b) =>
+  // Filter out showtimes that have already completed/passed for the selected date
+  const activeShows = theatreShows.filter((show) => !isShowTimePassed(show.showTime, date));
+
+  if (activeShows.length === 0) return null;
+
+  const theatreDetails = activeShows[0].theatre || {};
+
+  // Sort remaining upcoming shows chronologically by showTime
+  const sortedShows = [...activeShows].sort((a, b) =>
     parseShowTimeToMinutes(a.showTime) - parseShowTimeToMinutes(b.showTime)
   );
 

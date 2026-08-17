@@ -36,7 +36,7 @@ function Shows() {
   return (
     <section id="shows-section" className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 sm:pt-8 pb-0 select-none">
       <Showheader date={date} onDateSelect={handleDateSelect} />
-      <Showlist shows={shows} loading={loading} />
+      <Showlist shows={shows} date={date} loading={loading} />
     </section>
   );
 }

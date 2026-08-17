@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Ticket, CheckCircle2 } from 'lucide-react';
+import { Ticket, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import StripeCheckout from 'react-stripe-checkout';
 import { createBooking, makePayment } from '../../api/booking';
@@ -7,6 +7,7 @@ import { createBooking, makePayment } from '../../api/booking';
 function SeatsPrice({ selectedSeats, ticketPrice, showId, getSeatLabel, onBookingSuccess }) {
   const navigate = useNavigate();
   const [successPopup, setSuccessPopup] = useState(false);
+  const [errorPopup, setErrorPopup] = useState('');
   const [loading, setLoading] = useState(false);
 
   if (!selectedSeats || selectedSeats.length === 0) return null;
@@ -24,7 +25,7 @@ function SeatsPrice({ selectedSeats, ticketPrice, showId, getSeatLabel, onBookin
     setLoading(true);
 
     try {
-      // 1. Process Payment via Stripe
+      // 1. Process payment via Stripe
       const paymentResponse = await makePayment({
         token: token.id,
         amount: totalPrice * 100 // Convert ₹ to paise
@@ -33,7 +34,7 @@ function SeatsPrice({ selectedSeats, ticketPrice, showId, getSeatLabel, onBookin
       console.log("Payment Response:", paymentResponse);
 
       if (paymentResponse && paymentResponse.success) {
-        // 2. Create Booking in MongoDB on Payment Success
+        // 2. Create booking in MongoDB on payment success
         const bookingRequest = {
           show: showId,
           seats: [...selectedSeats],
@@ -56,15 +57,15 @@ function SeatsPrice({ selectedSeats, ticketPrice, showId, getSeatLabel, onBookin
         }
       } else {
         setLoading(false);
-        if (paymentResponse && (paymentResponse.message?.includes('token') || paymentResponse.message?.includes('authenticated'))) {
-          navigate('/login');
-        } else {
-          console.error(paymentResponse ? paymentResponse.message : "Payment failed");
-        }
+        const failureReason = paymentResponse ? paymentResponse.message : "Payment Failed";
+        setErrorPopup(failureReason);
+        setTimeout(() => setErrorPopup(''), 4000);
       }
     } catch (err) {
       setLoading(false);
-      console.error("Payment/Booking Error:", err);
+      const failureReason = err.message || "Payment Failed";
+      setErrorPopup(failureReason);
+      setTimeout(() => setErrorPopup(''), 4000);
     }
   };
 
@@ -74,17 +75,24 @@ function SeatsPrice({ selectedSeats, ticketPrice, showId, getSeatLabel, onBookin
 
   return (
     <>
-      {/* Simple Success Popup Badge */}
+      {/* Simple Static Success Popup Badge (No shaking or transition) */}
       {successPopup && (
-        <div className="fixed top-8 left-1/2 -translate-x-1/2 z-50 bg-slate-900 text-white text-xs sm:text-sm font-bold px-5 py-2.5 rounded-full shadow-lg flex items-center gap-2 animate-in fade-in slide-in-from-top-4 duration-200">
+        <div className="fixed top-8 left-1/2 -translate-x-1/2 z-50 bg-slate-900 text-white text-xs sm:text-sm font-bold px-5 py-2.5 rounded-full shadow-md flex items-center gap-2 transition-none">
           <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
           <span>Booking Completed Successfully</span>
         </div>
       )}
 
+      {/* Simple Static Red Error Badge (No shaking or transition) */}
+      {errorPopup && (
+        <div className="fixed top-8 left-1/2 -translate-x-1/2 z-50 bg-red-600 text-white text-xs sm:text-sm font-bold px-5 py-2.5 rounded-full shadow-md flex items-center gap-2 max-w-md text-center transition-none">
+          <AlertCircle className="w-4 h-4 text-white shrink-0" />
+          <span>{errorPopup}</span>
+        </div>
+      )}
+
       <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8 select-none">
-        {/* Consistent White Card Container matching SeatsDetails & SeatsCard */}
-        <div className="bg-white rounded-3xl border border-slate-200/90 p-5 sm:p-6 flex flex-col sm:flex-row items-center justify-between gap-4 animate-in fade-in duration-300">
+        <div className="bg-white rounded-3xl border border-slate-200/90 p-5 sm:p-6 flex flex-col sm:flex-row items-center justify-between gap-4 transition-none">
           
           {/* Selected Seats Information */}
           <div className="space-y-1 text-center sm:text-left">
@@ -111,13 +119,21 @@ function SeatsPrice({ selectedSeats, ticketPrice, showId, getSeatLabel, onBookin
               stripeKey={stripeKey}
               amount={totalPrice * 100}
               currency="INR"
+              email={localStorage.getItem('userEmail') || ''}
             >
               <button
                 type="button"
                 disabled={loading}
-                className="px-6 sm:px-8 py-3 rounded-2xl bg-slate-950 hover:bg-slate-800 text-white text-xs sm:text-sm font-black flex items-center gap-2 transition-all cursor-pointer hover:scale-105 disabled:opacity-60"
+                className="px-6 sm:px-8 py-3 rounded-2xl bg-slate-950 hover:bg-slate-800 text-white text-xs sm:text-sm font-black flex items-center gap-2 transition-none cursor-pointer hover:scale-105 disabled:opacity-60"
               >
-                <span>{loading ? 'Processing...' : 'Proceed to Pay'}</span>
+                {loading ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin text-white shrink-0" />
+                    <span>Processing...</span>
+                  </>
+                ) : (
+                  <span>Proceed to Pay</span>
+                )}
               </button>
             </StripeCheckout>
           </div>

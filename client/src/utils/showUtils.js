@@ -1,4 +1,4 @@
-// Helper to convert showtime strings (e.g., "09:30 AM", "06:45 PM") into total minutes for chronological sorting
+// Helper to convert showtime strings (e.g., "09:30 AM", "06:45 PM") into total minutes for chronological sorting & time comparison
 export const parseShowTimeToMinutes = (timeStr) => {
   if (!timeStr) return 0;
   const match = timeStr.match(/(\d+):(\d+)\s*(AM|PM)?/i);
@@ -11,6 +11,29 @@ export const parseShowTimeToMinutes = (timeStr) => {
   if (period === 'AM' && hours === 12) hours = 0;
 
   return hours * 60 + minutes;
+};
+
+// Helper to check if a specific showtime on a specific date has already completed/passed
+export const isShowTimePassed = (timeStr, selectedDateStr) => {
+  if (!timeStr || !selectedDateStr) return false;
+  const now = new Date();
+
+  const todayYear = now.getFullYear();
+  const todayMonth = String(now.getMonth() + 1).padStart(2, '0');
+  const todayDay = String(now.getDate()).padStart(2, '0');
+  const todayStr = `${todayYear}-${todayMonth}-${todayDay}`;
+
+  // If selected date is in the past (e.g., yesterday), the show is completed
+  if (selectedDateStr < todayStr) return true;
+
+  // If selected date is in the future (e.g., tomorrow), the show is upcoming
+  if (selectedDateStr > todayStr) return false;
+
+  // If selected date is TODAY, compare current time in minutes with showTime in minutes
+  const currentMinutes = now.getHours() * 60 + now.getMinutes();
+  const showMinutes = parseShowTimeToMinutes(timeStr);
+
+  return showMinutes <= currentMinutes;
 };
 
 // Helper to generate upcoming days array for BookMyShow style date selector strip

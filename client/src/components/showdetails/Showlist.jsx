@@ -1,7 +1,8 @@
 import React from 'react';
 import Showcard from './Showcard';
+import { isShowTimePassed } from '../../utils/showUtils';
 
-function Showlist({ shows, loading }) {
+function Showlist({ shows, date, loading }) {
   if (loading) {
     return (
       <div className="bg-white rounded-3xl border border-slate-200/90 p-12 text-center shadow-xs">
@@ -11,14 +12,20 @@ function Showlist({ shows, loading }) {
     );
   }
 
-  if (!shows || Object.keys(shows).length === 0) {
+  // Filter theatres that have at least one upcoming/active showtime for the selected date
+  const activeTheatreIds = Object.keys(shows || {}).filter((theatreId) => {
+    const theatreShows = shows[theatreId];
+    return theatreShows && theatreShows.some((show) => !isShowTimePassed(show.showTime, date));
+  });
+
+  if (!shows || Object.keys(shows).length === 0 || activeTheatreIds.length === 0) {
     return (
       <div className="bg-white rounded-3xl border border-slate-200/90 p-8 sm:p-12 text-center space-y-2 shadow-xs">
         <h3 className="text-base sm:text-lg font-bold text-slate-900">
-          No shows available for this date
+          No showtimes available for this date
         </h3>
         <p className="text-xs sm:text-sm text-slate-500 font-medium">
-          Please select another date or check back later for updated theatre showtimes.
+          All showtimes for this date have completed or are unavailable. Please select another date for upcoming showtimes.
         </p>
       </div>
     );
@@ -26,10 +33,11 @@ function Showlist({ shows, loading }) {
 
   return (
     <div className="space-y-4">
-      {Object.keys(shows).map((theatreId) => (
+      {activeTheatreIds.map((theatreId) => (
         <Showcard
           key={theatreId}
           theatreShows={shows[theatreId]}
+          date={date}
         />
       ))}
     </div>
