@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { Ticket, CheckCircle2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { createBooking } from '../../api/booking';
+import StripeCheckout from 'react-stripe-checkout';
+import { createBooking, makePayment } from '../../api/booking';
 
 function SeatsPrice({ selectedSeats, ticketPrice, showId, getSeatLabel, onBookingSuccess }) {
   const navigate = useNavigate();
@@ -12,47 +13,64 @@ function SeatsPrice({ selectedSeats, ticketPrice, showId, getSeatLabel, onBookin
 
   const totalPrice = selectedSeats.length * ticketPrice;
 
-  const handleProceedBooking = async () => {
-    const token = localStorage.getItem('accessToken');
-    if (!token) {
+  // Triggered automatically when user submits card in Stripe modal
+  const onToken = async (token) => {
+    const userToken = localStorage.getItem('accessToken');
+    if (!userToken) {
       navigate('/login');
       return;
     }
 
     setLoading(true);
-    const mockTransactionId = `txn_${Date.now()}_${Math.floor(Math.random() * 1000)}`;
-
-    const bookingRequest = {
-      show: showId,
-      seats: [...selectedSeats],
-      transactionId: mockTransactionId,
-    };
 
     try {
-      const bookingResponse = await createBooking(bookingRequest);
-      setLoading(false);
-      console.log("Booking response:", bookingResponse);
+      // 1. Process Payment via Stripe
+      const paymentResponse = await makePayment({
+        token: token.id,
+        amount: totalPrice * 100 // Convert ₹ to paise
+      });
 
-      if (bookingResponse && bookingResponse.success) {
-        setSuccessPopup(true);
-        setTimeout(() => {
-          setSuccessPopup(false);
-          if (onBookingSuccess) {
-            onBookingSuccess(selectedSeats);
-          }
-        }, 1500);
-      } else {
-        if (bookingResponse && (bookingResponse.message?.includes('token') || bookingResponse.message?.includes('authenticated'))) {
-          navigate('/login');
+      console.log("Payment Response:", paymentResponse);
+
+      if (paymentResponse && paymentResponse.success) {
+        // 2. Create Booking in MongoDB on Payment Success
+        const bookingRequest = {
+          show: showId,
+          seats: [...selectedSeats],
+          transactionId: paymentResponse.transactionId || paymentResponse.data,
+        };
+
+        const bookingResponse = await createBooking(bookingRequest);
+        setLoading(false);
+
+        if (bookingResponse && bookingResponse.success) {
+          setSuccessPopup(true);
+          setTimeout(() => {
+            setSuccessPopup(false);
+            if (onBookingSuccess) {
+              onBookingSuccess(selectedSeats);
+            }
+          }, 1500);
         } else {
           console.error(bookingResponse ? bookingResponse.message : "Booking creation failed");
+        }
+      } else {
+        setLoading(false);
+        if (paymentResponse && (paymentResponse.message?.includes('token') || paymentResponse.message?.includes('authenticated'))) {
+          navigate('/login');
+        } else {
+          console.error(paymentResponse ? paymentResponse.message : "Payment failed");
         }
       }
     } catch (err) {
       setLoading(false);
-      console.error("Booking Error:", err);
+      console.error("Payment/Booking Error:", err);
     }
   };
+
+  const stripeKey = (typeof process !== 'undefined' && process.env && process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY)
+    ? process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY
+    : (import.meta.env?.VITE_STRIPE_PUBLISHABLE_KEY || "pk_test_51U5IIOP4CdTODxXhkTAL1UuG4TaF13mRILXYjzDCp2dKH9dE63iAmQbinoSXM50BfyJGa665uhdFtRRIfq1z4B8300I62rgUnc");
 
   return (
     <>
@@ -81,21 +99,27 @@ function SeatsPrice({ selectedSeats, ticketPrice, showId, getSeatLabel, onBookin
             </p>
           </div>
 
-          {/* Total Price Calculation & Direct Booking Proceed Action */}
+          {/* Total Price & Stripe Checkout Payment Gateway */}
           <div className="flex items-center gap-6">
             <div className="text-right">
               <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Total Price</p>
               <p className="text-xl sm:text-2xl font-black text-slate-900">₹{totalPrice}</p>
             </div>
 
-            <button
-              type="button"
-              disabled={loading}
-              onClick={handleProceedBooking}
-              className="px-6 sm:px-8 py-3 rounded-2xl bg-slate-950 hover:bg-slate-800 text-white text-xs sm:text-sm font-black flex items-center gap-2 transition-all cursor-pointer hover:scale-105 disabled:opacity-60"
+            <StripeCheckout
+              token={onToken}
+              stripeKey={stripeKey}
+              amount={totalPrice * 100}
+              currency="INR"
             >
-              <span>{loading ? 'Booking...' : 'Proceed to Pay'}</span>
-            </button>
+              <button
+                type="button"
+                disabled={loading}
+                className="px-6 sm:px-8 py-3 rounded-2xl bg-slate-950 hover:bg-slate-800 text-white text-xs sm:text-sm font-black flex items-center gap-2 transition-all cursor-pointer hover:scale-105 disabled:opacity-60"
+              >
+                <span>{loading ? 'Processing...' : 'Proceed to Pay'}</span>
+              </button>
+            </StripeCheckout>
           </div>
 
         </div>

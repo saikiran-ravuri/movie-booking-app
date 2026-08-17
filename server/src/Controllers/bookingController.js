@@ -2,7 +2,7 @@ const BookingsModel = require("../Models/bookingModel");
 const ShowModel = require("../Models/showModle");
 require('dotenv').config();
 
-const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
+const stripeSecretKey = process.env.STRIPE_SECRET_KEY || process.env.stripe_key;
 const stripe = stripeSecretKey ? require('stripe')(stripeSecretKey) : null;
 
 const makePayment = async (req, res) => {
