@@ -15,8 +15,8 @@ function SeatsCard({ showDetails: propShowDetails }) {
   useEffect(() => {
     if (!propShowDetails && showId) {
       const fetchDetails = async () => {
-        const res = await GetShowDetails(showId, queryDate);
-        if (res && res.data) {
+        const res = await GetShowDetails(showId);
+        if (res?.data) {
           const data = { ...res.data };
           if (queryDate) data.showDate = queryDate;
           setShowDetails(data);
@@ -73,12 +73,10 @@ function SeatsCard({ showDetails: propShowDetails }) {
 
   return (
     <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 select-none space-y-6">
-      
-      <div className="bg-white rounded-3xl border border-slate-200/90 p-6 sm:p-10 space-y-6">
-
+      <div className="relative overflow-hidden rounded-3xl bg-white border border-slate-200 py-6 sm:py-8 px-6 sm:px-10 space-y-6">
         <div className="border-b border-slate-100 pb-3 text-center">
-          <p className="text-xs font-black text-slate-500 uppercase tracking-widest">
-            STANDARD - ₹{ticketPrice}
+          <p className="text-xs font-extrabold text-slate-500 uppercase tracking-widest">
+            STANDARD — ₹{ticketPrice}
           </p>
         </div>
 
@@ -113,13 +111,12 @@ function SeatsCard({ showDetails: propShowDetails }) {
                               type="button"
                               disabled={isBooked}
                               onClick={() => handleSeatSelect(seatNumber)}
-                              className={`w-6 h-6 sm:w-7 sm:h-7 rounded-md sm:rounded-lg text-[8px] sm:text-[10px] font-bold transition-all flex items-center justify-center cursor-pointer ${
-                                isBooked
-                                  ? 'bg-slate-200 text-slate-400 border border-slate-300 cursor-not-allowed'
-                                  : isSelected
+                              className={`w-6 h-6 sm:w-7 sm:h-7 rounded-md sm:rounded-lg text-[8px] sm:text-[10px] font-bold transition-all flex items-center justify-center cursor-pointer ${isBooked
+                                ? 'bg-slate-200 text-slate-400 border border-slate-300 cursor-not-allowed'
+                                : isSelected
                                   ? 'bg-slate-950 text-white border border-slate-950 scale-105'
                                   : 'bg-white text-slate-700 border border-slate-200 hover:border-slate-400 hover:bg-slate-50'
-                              }`}
+                                }`}
                             >
                               {seatLabel}
                             </button>
@@ -138,14 +135,14 @@ function SeatsCard({ showDetails: propShowDetails }) {
           </div>
         </div>
 
-        <div className="w-full flex flex-col items-center justify-center space-y-2 pt-4 pb-2">
-          <p className="text-[11px] font-black text-slate-400 uppercase tracking-widest">
+        <div className="w-full flex flex-col items-center justify-center space-y-1.5 pt-3 pb-1">
+          <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">
             SCREEN
           </p>
-          <div className="w-full max-w-xl h-1.5 bg-slate-900 rounded-full" />
+          <div className="w-full max-w-sm h-1 bg-slate-900 rounded-full" />
         </div>
 
-        <div className="flex items-center justify-center gap-6 sm:gap-10 text-xs font-bold text-slate-600">
+        <div className="flex items-center justify-center gap-6 sm:gap-10 text-xs font-semibold text-slate-600 border-t border-slate-100 pt-6">
           <div className="flex items-center gap-2">
             <span className="w-3.5 h-3.5 rounded-md border border-slate-300 bg-white" />
             <span>Available</span>
@@ -161,7 +158,6 @@ function SeatsCard({ showDetails: propShowDetails }) {
             <span>Sold</span>
           </div>
         </div>
-
       </div>
 
       <SeatsPrice
@@ -172,7 +168,6 @@ function SeatsCard({ showDetails: propShowDetails }) {
         getSeatLabel={getSeatLabel}
         onBookingSuccess={handleBookingSuccess}
       />
-
     </div>
   );
 }

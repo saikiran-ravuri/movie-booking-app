@@ -16,29 +16,19 @@ function ShowSeat() {
     };
 
     window.addEventListener('popstate', handlePopState);
-    return () => {
-      window.removeEventListener('popstate', handlePopState);
-    };
+    return () => window.removeEventListener('popstate', handlePopState);
   }, [navigate]);
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-950 font-sans flex flex-col justify-between select-none">
-      
-      {/* Navbar Component */}
       <Navbar />
 
-      {/* Main Page Layout Container */}
       <main className="flex-grow pb-16 space-y-2">
-        {/* Show & Venue Information Hero Component */}
         <SeatsDetails />
-
-        {/* Seats Grid & Booking Summary Component */}
         <SeatsCard />
       </main>
 
-      {/* Footer Component */}
       <Footer />
-
     </div>
   );
 }

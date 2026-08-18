@@ -35,7 +35,7 @@ function SeatsPrice({ selectedSeats, ticketPrice, showId, showDetails, getSeatLa
         amount: totalPrice * 100
       });
 
-      if (paymentResponse && paymentResponse.success) {
+      if (paymentResponse?.success) {
         const bookingRequest = {
           show: showId,
           seats: [...selectedSeats],
@@ -46,7 +46,7 @@ function SeatsPrice({ selectedSeats, ticketPrice, showId, showDetails, getSeatLa
         const bookingResponse = await createBooking(bookingRequest);
         setLoading(false);
 
-        if (bookingResponse && bookingResponse.success) {
+        if (bookingResponse?.success) {
           setSuccessPopup(true);
           setBookedSeatsList([...selectedSeats]);
 
@@ -120,34 +120,33 @@ function SeatsPrice({ selectedSeats, ticketPrice, showId, showDetails, getSeatLa
       )}
 
       {successPopup && !ticketData && (
-        <div className="fixed top-8 left-1/2 -translate-x-1/2 z-50 bg-slate-900 text-white text-xs sm:text-sm font-bold px-5 py-2.5 rounded-full shadow-md">
+        <div className="fixed top-8 left-1/2 -translate-x-1/2 z-50 bg-slate-950 text-white text-xs sm:text-sm font-semibold px-5 py-2.5 rounded-full shadow-lg">
           <span>Booking Completed Successfully</span>
         </div>
       )}
 
       {errorPopup && (
-        <div className="fixed top-8 left-1/2 -translate-x-1/2 z-50 bg-red-600 text-white text-xs sm:text-sm font-bold px-5 py-2.5 rounded-full shadow-md max-w-md text-center">
+        <div className="fixed top-8 left-1/2 -translate-x-1/2 z-50 bg-red-600 text-white text-xs sm:text-sm font-semibold px-5 py-2.5 rounded-full shadow-lg max-w-md text-center">
           <span>{errorPopup}</span>
         </div>
       )}
 
       {!ticketData && selectedSeats && selectedSeats.length > 0 && (
         <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8 select-none">
-          <div className="bg-white rounded-3xl border border-slate-200/90 p-5 sm:p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-
+          <div className="relative overflow-hidden rounded-3xl bg-white border border-slate-200 py-5 sm:py-6 px-6 sm:px-10 flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="space-y-1 text-center sm:text-left">
-              <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">
+              <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
                 Selected Seats ({selectedSeats.length}/6)
               </p>
               <p className="text-xs sm:text-sm font-bold text-slate-900">
-                Seats: <span className="font-black text-slate-900">{selectedSeats.sort((a, b) => a - b).map(getSeatLabel).join(', ')}</span>
+                Seats: <span className="font-extrabold text-slate-950">{selectedSeats.sort((a, b) => a - b).map(getSeatLabel).join(', ')}</span>
               </p>
             </div>
 
             <div className="flex items-center gap-6">
               <div className="text-right">
-                <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Total Price</p>
-                <p className="text-xl sm:text-2xl font-black text-slate-900">₹{totalPrice}</p>
+                <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Total Price</p>
+                <p className="text-xl sm:text-2xl font-extrabold text-slate-950">₹{totalPrice}</p>
               </div>
 
               <StripeCheckout
@@ -160,13 +159,12 @@ function SeatsPrice({ selectedSeats, ticketPrice, showId, showDetails, getSeatLa
                 <button
                   type="button"
                   disabled={loading}
-                  className="px-6 sm:px-8 py-3 rounded-2xl bg-slate-950 hover:bg-slate-800 text-white text-xs sm:text-sm font-black flex items-center gap-2 transition-none cursor-pointer hover:scale-105 disabled:opacity-60"
+                  className="px-6 py-2.5 bg-slate-950 text-white text-xs sm:text-sm font-bold rounded-xl hover:bg-slate-800 transition-colors cursor-pointer disabled:opacity-60"
                 >
                   <span>{loading ? 'Processing...' : 'Proceed to Pay'}</span>
                 </button>
               </StripeCheckout>
             </div>
-
           </div>
         </div>
       )}
