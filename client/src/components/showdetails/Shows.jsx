@@ -9,11 +9,10 @@ function Shows() {
   const targetMovieId = id || movieId;
   const [, setSearchParams] = useSearchParams();
 
-  // Always default date to today's date on initial load or page refresh
   const todayDate = new Date().toISOString().split('T')[0];
   const [date, setDate] = useState(todayDate);
   const [shows, setShows] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (!targetMovieId) return;
@@ -34,7 +33,7 @@ function Shows() {
   };
 
   return (
-    <section id="shows-section" className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 sm:pt-8 pb-0 select-none">
+    <section id="shows-section" className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 sm:pt-8 pb-12 select-none">
       <Showheader date={date} onDateSelect={handleDateSelect} />
       <Showlist shows={shows} date={date} loading={loading} />
     </section>

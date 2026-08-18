@@ -1,5 +1,5 @@
 import React from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate, Outlet } from 'react-router-dom';
 import Home from '../pages/home';
 import MainHome from '../pages/mainHome';
 import MovieDetails from '../pages/movieDetails';
@@ -10,47 +10,39 @@ import Login from '../components/auth/Login';
 import ForgotPassword from '../components/auth/ForgotPassword';
 import ResetPassword from '../components/auth/ResetPassword';
 
-function ProtectedRoute({ children }) {
-  const token = localStorage.getItem('accessToken') || localStorage.getItem('token');
-  if (!token) {
-    return <Navigate to="/" replace />;
-  }
-  return children;
+const isAuthenticated = () =>
+  Boolean(localStorage.getItem('accessToken') || localStorage.getItem('token'));
+
+function ProtectedRoute() {
+  return isAuthenticated() ? <Outlet /> : <Navigate to="/" replace />;
+}
+
+function PublicRoute() {
+  return isAuthenticated() ? <Navigate to="/main-home" replace /> : <Outlet />;
 }
 
 function AppRoutes() {
   return (
     <Routes>
-      <Route path="/" element={<Home />} />
+      <Route element={<PublicRoute />}>
+        <Route path="/" element={<Home />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/forget" element={<ForgotPassword />} />
+        <Route path="/reset" element={<ResetPassword />} />
+      </Route>
+
+      <Route element={<ProtectedRoute />}>
+        <Route path="/main-home" element={<MainHome />} />
+        <Route path="/movies/:id" element={<MovieDetails />} />
+        <Route path="/book-show/:id" element={<ShowSeat />} />
+        <Route path="/my-bookings" element={<MyBookings />} />
+      </Route>
 
       <Route
-        path="/main-home"
-        element={
-          <ProtectedRoute>
-            <MainHome />
-          </ProtectedRoute>
-        }
+        path="*"
+        element={<Navigate to={isAuthenticated() ? '/main-home' : '/'} replace />}
       />
-
-      <Route path="/movies/:id" element={<MovieDetails />} />
-
-      <Route
-        path="/book-show/:id"
-        element={
-          <ProtectedRoute>
-            <ShowSeat />
-          </ProtectedRoute>
-        }
-      />
-
-      <Route path="/my-bookings" element={<MyBookings />} />
-
-      <Route path="/register" element={<Register />} />
-      <Route path="/login" element={<Login />} />
-      <Route path="/forget" element={<ForgotPassword />} />
-      <Route path="/reset" element={<ResetPassword />} />
-
-      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
 }
