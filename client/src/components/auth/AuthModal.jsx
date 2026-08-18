@@ -15,21 +15,16 @@ function AuthModal({ isOpen, onClose, initialView = 'login' }) {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm transition-all duration-300">
-
-      {/* Modal Container */}
-      <div className="relative w-full max-w-md bg-white border border-slate-200/80 rounded-2xl p-6 sm:p-8 shadow-2xl animate-in fade-in zoom-in-95 duration-200">
-
-        {/* Close Button */}
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-xs transition-opacity">
+      <div className="relative overflow-hidden w-full max-w-md bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 shadow-2xl">
         <button
           type="button"
           onClick={onClose}
-          className="absolute top-4 right-4 p-1.5 rounded-full text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-all cursor-pointer"
+          className="absolute top-4 right-4 w-9 h-9 rounded-xl text-slate-500 hover:text-slate-950 hover:bg-slate-100 transition-colors cursor-pointer flex items-center justify-center"
         >
           <X className="w-5 h-5" />
         </button>
 
-        {/* Dynamic Auth Component Inside Modal */}
         {authView === 'login' && (
           <Login
             isModal={true}
@@ -62,7 +57,6 @@ function AuthModal({ isOpen, onClose, initialView = 'login' }) {
             onSwitchToLogin={() => setAuthView('login')}
           />
         )}
-
       </div>
     </div>
   );
