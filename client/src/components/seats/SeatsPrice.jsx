@@ -1,20 +1,22 @@
 import React, { useState } from 'react';
-import { Ticket, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import StripeCheckout from 'react-stripe-checkout';
 import { createBooking, makePayment } from '../../api/booking';
+import TicketModal from '../booking/TicketModal';
 
-function SeatsPrice({ selectedSeats, ticketPrice, showId, getSeatLabel, onBookingSuccess }) {
+function SeatsPrice({ selectedSeats, ticketPrice, showId, showDetails, getSeatLabel, onBookingSuccess }) {
   const navigate = useNavigate();
   const [successPopup, setSuccessPopup] = useState(false);
   const [errorPopup, setErrorPopup] = useState('');
   const [loading, setLoading] = useState(false);
+  const [ticketData, setTicketData] = useState(null);
+  const [bookedSeatsList, setBookedSeatsList] = useState([]);
 
-  if (!selectedSeats || selectedSeats.length === 0) return null;
+  if ((!selectedSeats || selectedSeats.length === 0) && !ticketData) return null;
 
-  const totalPrice = selectedSeats.length * ticketPrice;
+  const activeSeats = ticketData ? bookedSeatsList : selectedSeats;
+  const totalPrice = activeSeats.length * ticketPrice;
 
-  // Triggered automatically when user submits card in Stripe modal
   const onToken = async (token) => {
     const userToken = localStorage.getItem('accessToken');
     if (!userToken) {
@@ -25,20 +27,17 @@ function SeatsPrice({ selectedSeats, ticketPrice, showId, getSeatLabel, onBookin
     setLoading(true);
 
     try {
-      // 1. Process payment via Stripe
       const paymentResponse = await makePayment({
         token: token.id,
-        amount: totalPrice * 100 // Convert ₹ to paise
+        amount: totalPrice * 100
       });
 
-      console.log("Payment Response:", paymentResponse);
-
       if (paymentResponse && paymentResponse.success) {
-        // 2. Create booking in MongoDB on payment success
         const bookingRequest = {
           show: showId,
           seats: [...selectedSeats],
           transactionId: paymentResponse.transactionId || paymentResponse.data,
+          bookingDate: showDetails?.showDate
         };
 
         const bookingResponse = await createBooking(bookingRequest);
@@ -46,100 +45,104 @@ function SeatsPrice({ selectedSeats, ticketPrice, showId, getSeatLabel, onBookin
 
         if (bookingResponse && bookingResponse.success) {
           setSuccessPopup(true);
-          setTimeout(() => {
-            setSuccessPopup(false);
-            if (onBookingSuccess) {
-              onBookingSuccess(selectedSeats);
-            }
-          }, 1500);
-        } else {
-          console.error(bookingResponse ? bookingResponse.message : "Booking creation failed");
+          setBookedSeatsList([...selectedSeats]);
+
+          const bookingObj = bookingResponse.data || {
+            _id: bookingResponse.message?.split(' ')?.pop() || 'BK' + Date.now(),
+            transactionId: paymentResponse.transactionId
+          };
+          setTicketData(bookingObj);
         }
       } else {
         setLoading(false);
-        const failureReason = paymentResponse ? paymentResponse.message : "Payment Failed";
+        const failureReason = paymentResponse ? paymentResponse.message : 'Payment Failed';
         setErrorPopup(failureReason);
         setTimeout(() => setErrorPopup(''), 4000);
       }
     } catch (err) {
       setLoading(false);
-      const failureReason = err.message || "Payment Failed";
+      const failureReason = err.message || 'Payment Failed';
       setErrorPopup(failureReason);
       setTimeout(() => setErrorPopup(''), 4000);
     }
   };
 
+  const handleCloseTicketModal = () => {
+    const seatsToClear = [...bookedSeatsList];
+    setTicketData(null);
+    setSuccessPopup(false);
+    if (onBookingSuccess) {
+      onBookingSuccess(seatsToClear);
+    }
+  };
+
   const stripeKey = (typeof process !== 'undefined' && process.env && process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY)
     ? process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY
-    : (import.meta.env?.VITE_STRIPE_PUBLISHABLE_KEY || "pk_test_51U5IIOP4CdTODxXhkTAL1UuG4TaF13mRILXYjzDCp2dKH9dE63iAmQbinoSXM50BfyJGa665uhdFtRRIfq1z4B8300I62rgUnc");
+    : (import.meta.env?.VITE_STRIPE_PUBLISHABLE_KEY || 'pk_test_51U5IIOP4CdTODxXhkTAL1UuG4TaF13mRILXYjzDCp2dKH9dE63iAmQbinoSXM50BfyJGa665uhdFtRRIfq1z4B8300I62rgUnc');
 
   return (
     <>
-      {/* Simple Static Success Popup Badge (No shaking or transition) */}
-      {successPopup && (
-        <div className="fixed top-8 left-1/2 -translate-x-1/2 z-50 bg-slate-900 text-white text-xs sm:text-sm font-bold px-5 py-2.5 rounded-full shadow-md flex items-center gap-2 transition-none">
-          <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+      {ticketData && (
+        <TicketModal
+          bookingData={ticketData}
+          showDetails={showDetails}
+          selectedSeats={activeSeats}
+          getSeatLabel={getSeatLabel}
+          onClose={handleCloseTicketModal}
+        />
+      )}
+
+      {successPopup && !ticketData && (
+        <div className="fixed top-8 left-1/2 -translate-x-1/2 z-50 bg-slate-900 text-white text-xs sm:text-sm font-bold px-5 py-2.5 rounded-full shadow-md">
           <span>Booking Completed Successfully</span>
         </div>
       )}
 
-      {/* Simple Static Red Error Badge (No shaking or transition) */}
       {errorPopup && (
-        <div className="fixed top-8 left-1/2 -translate-x-1/2 z-50 bg-red-600 text-white text-xs sm:text-sm font-bold px-5 py-2.5 rounded-full shadow-md flex items-center gap-2 max-w-md text-center transition-none">
-          <AlertCircle className="w-4 h-4 text-white shrink-0" />
+        <div className="fixed top-8 left-1/2 -translate-x-1/2 z-50 bg-red-600 text-white text-xs sm:text-sm font-bold px-5 py-2.5 rounded-full shadow-md max-w-md text-center">
           <span>{errorPopup}</span>
         </div>
       )}
 
-      <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8 select-none">
-        <div className="bg-white rounded-3xl border border-slate-200/90 p-5 sm:p-6 flex flex-col sm:flex-row items-center justify-between gap-4 transition-none">
-          
-          {/* Selected Seats Information */}
-          <div className="space-y-1 text-center sm:text-left">
-            <div className="flex items-center justify-center sm:justify-start gap-2">
-              <Ticket className="w-4 h-4 text-slate-900" />
+      {!ticketData && selectedSeats && selectedSeats.length > 0 && (
+        <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8 select-none">
+          <div className="bg-white rounded-3xl border border-slate-200/90 p-5 sm:p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+
+            <div className="space-y-1 text-center sm:text-left">
               <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">
                 Selected Seats ({selectedSeats.length}/6)
               </p>
-            </div>
-            <p className="text-xs sm:text-sm font-bold text-slate-900">
-              Seats: <span className="font-black text-slate-900">{selectedSeats.sort((a, b) => a - b).map(getSeatLabel).join(', ')}</span>
-            </p>
-          </div>
-
-          {/* Total Price & Stripe Checkout Payment Gateway */}
-          <div className="flex items-center gap-6">
-            <div className="text-right">
-              <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Total Price</p>
-              <p className="text-xl sm:text-2xl font-black text-slate-900">₹{totalPrice}</p>
+              <p className="text-xs sm:text-sm font-bold text-slate-900">
+                Seats: <span className="font-black text-slate-900">{selectedSeats.sort((a, b) => a - b).map(getSeatLabel).join(', ')}</span>
+              </p>
             </div>
 
-            <StripeCheckout
-              token={onToken}
-              stripeKey={stripeKey}
-              amount={totalPrice * 100}
-              currency="INR"
-              email={localStorage.getItem('userEmail') || ''}
-            >
-              <button
-                type="button"
-                disabled={loading}
-                className="px-6 sm:px-8 py-3 rounded-2xl bg-slate-950 hover:bg-slate-800 text-white text-xs sm:text-sm font-black flex items-center gap-2 transition-none cursor-pointer hover:scale-105 disabled:opacity-60"
+            <div className="flex items-center gap-6">
+              <div className="text-right">
+                <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Total Price</p>
+                <p className="text-xl sm:text-2xl font-black text-slate-900">₹{totalPrice}</p>
+              </div>
+
+              <StripeCheckout
+                token={onToken}
+                stripeKey={stripeKey}
+                amount={totalPrice * 100}
+                currency="INR"
+                email={localStorage.getItem('userEmail') || ''}
               >
-                {loading ? (
-                  <>
-                    <Loader2 className="w-4 h-4 animate-spin text-white shrink-0" />
-                    <span>Processing...</span>
-                  </>
-                ) : (
-                  <span>Proceed to Pay</span>
-                )}
-              </button>
-            </StripeCheckout>
-          </div>
+                <button
+                  type="button"
+                  disabled={loading}
+                  className="px-6 sm:px-8 py-3 rounded-2xl bg-slate-950 hover:bg-slate-800 text-white text-xs sm:text-sm font-black flex items-center gap-2 transition-none cursor-pointer hover:scale-105 disabled:opacity-60"
+                >
+                  <span>{loading ? 'Processing...' : 'Proceed to Pay'}</span>
+                </button>
+              </StripeCheckout>
+            </div>
 
+          </div>
         </div>
-      </div>
+      )}
     </>
   );
 }

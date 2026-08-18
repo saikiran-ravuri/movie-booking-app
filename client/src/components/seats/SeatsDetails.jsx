@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import { Film, MapPin, Calendar, Clock } from 'lucide-react';
+import { useParams, useSearchParams } from 'react-router-dom';
+import { MapPin } from 'lucide-react';
 import { GetShowDetails } from '../../api/show';
 
 function SeatsDetails({ showDetails: propShowDetails }) {
   const params = useParams();
+  const [searchParams] = useSearchParams();
+  const queryDate = searchParams.get('date');
   const showId = params.id || params.showId;
   const [showDetails, setShowDetails] = useState(propShowDetails || null);
   const [loading, setLoading] = useState(!propShowDetails);
@@ -13,18 +15,22 @@ function SeatsDetails({ showDetails: propShowDetails }) {
     if (!propShowDetails && showId) {
       const fetchDetails = async () => {
         setLoading(true);
-        const res = await GetShowDetails(showId);
+        const res = await GetShowDetails(showId, queryDate);
         if (res && res.data) {
-          setShowDetails(res.data);
+          const data = { ...res.data };
+          if (queryDate) data.showDate = queryDate;
+          setShowDetails(data);
         }
         setLoading(false);
       };
       fetchDetails();
     } else if (propShowDetails) {
-      setShowDetails(propShowDetails);
+      const data = { ...propShowDetails };
+      if (queryDate) data.showDate = queryDate;
+      setShowDetails(data);
       setLoading(false);
     }
-  }, [showId, propShowDetails]);
+  }, [showId, propShowDetails, queryDate]);
 
   if (loading) {
     return (
@@ -43,12 +49,11 @@ function SeatsDetails({ showDetails: propShowDetails }) {
   const theatre = showDetails.theatre || {};
   const movieTitle = movie.movieName || movie.title || 'Movie Title';
 
-  // Minimise date format (e.g., Aug 20, 2026)
-  const formattedDate = showDetails.showDate
-    ? new Date(showDetails.showDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+  const rawDate = showDetails.showDate;
+  const formattedDate = rawDate
+    ? new Date(typeof rawDate === 'string' && !rawDate.includes('T') ? `${rawDate}T00:00:00` : rawDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
     : '';
 
-  // Format genre with proper spaces after commas (e.g., Action, Adventure, Sci-Fi)
   const formattedGenre = Array.isArray(movie.genre)
     ? movie.genre.join(', ')
     : (movie.genre || '').replaceAll(',', ', ');
@@ -57,44 +62,36 @@ function SeatsDetails({ showDetails: propShowDetails }) {
 
   return (
     <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 sm:pt-8 pb-0 select-none">
-      {/* Show Details Header Card */}
       <div className="bg-white rounded-3xl border border-slate-200/90 p-6 sm:p-8 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 shadow-xs">
-        
-        {/* Left Side: Theatre Name, Location, Date & Time */}
+
         <div className="space-y-3 max-w-xl w-full lg:w-auto">
-          {/* Theatre Name & Location (Stacked) */}
           <div className="space-y-1">
-            <p className="flex items-center gap-2 text-slate-950 font-extrabold text-base sm:text-lg tracking-tight">
-              <Film className="w-4 h-4 text-slate-600 shrink-0" />
+            <p className="text-slate-950 font-extrabold text-base sm:text-lg tracking-tight">
               {theatre.name || 'Cinema Venue'}
             </p>
             {theatre.address && (
-              <p className="flex items-center gap-2 text-slate-500 text-xs sm:text-sm font-medium pl-0.5">
+              <p className="flex items-center gap-1.5 text-slate-500 text-xs sm:text-sm font-medium">
                 <MapPin className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                {theatre.address}
+                <span>{theatre.address}</span>
               </p>
             )}
           </div>
 
-          {/* Date & Time Badges */}
-          <div className="flex flex-wrap items-center gap-2.5 pt-0.5">
+          <div className="flex flex-wrap items-center gap-2 pt-0.5">
             {formattedDate && (
-              <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-50 border border-slate-200/90 text-slate-900 text-xs font-bold shadow-2xs">
-                <Calendar className="w-3.5 h-3.5 text-slate-500 shrink-0" />
-                <span>{formattedDate}</span>
-              </div>
+              <span className="px-3 py-1 rounded-full bg-white border border-slate-300 text-slate-950 text-xs font-bold">
+                {formattedDate}
+              </span>
             )}
 
             {showDetails.showTime && (
-              <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-50 border border-slate-200/90 text-slate-900 text-xs font-bold shadow-2xs">
-                <Clock className="w-3.5 h-3.5 text-slate-500 shrink-0" />
-                <span>{showDetails.showTime}</span>
-              </div>
+              <span className="px-3 py-1 rounded-full bg-white border border-slate-300 text-slate-950 text-xs font-bold">
+                {showDetails.showTime}
+              </span>
             )}
           </div>
         </div>
 
-        {/* Right Side: Movie Title & Tagline Underneath (Genre only) */}
         <div className="max-w-xl w-full lg:w-auto text-left lg:text-right shrink-0 space-y-1.5">
           <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black text-slate-950 tracking-tight leading-tight">
             {movieTitle}

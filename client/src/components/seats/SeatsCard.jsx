@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 import { GetShowDetails } from '../../api/show';
 import SeatsPrice from './SeatsPrice';
 
 function SeatsCard({ showDetails: propShowDetails }) {
   const params = useParams();
+  const [searchParams] = useSearchParams();
+  const queryDate = searchParams.get('date');
   const showId = params.id || params.showId;
   const [showDetails, setShowDetails] = useState(propShowDetails || null);
   const [selectedSeats, setSelectedSeats] = useState([]);
@@ -13,20 +15,21 @@ function SeatsCard({ showDetails: propShowDetails }) {
   useEffect(() => {
     if (!propShowDetails && showId) {
       const fetchDetails = async () => {
-        const res = await GetShowDetails(showId);
+        const res = await GetShowDetails(showId, queryDate);
         if (res && res.data) {
           setShowDetails(res.data);
         }
       };
       fetchDetails();
     } else if (propShowDetails) {
-      setShowDetails(propShowDetails);
+      const data = { ...propShowDetails };
+      if (queryDate) data.showDate = queryDate;
+      setShowDetails(data);
     }
-  }, [showId, propShowDetails]);
+  }, [showId, propShowDetails, queryDate]);
 
   if (!showDetails) return null;
 
-  // Strictly 120 seats total (20 columns x 6 rows)
   const totalSeats = showDetails.totalSeats ? Math.min(showDetails.totalSeats, 120) : 120;
   const columns = 20;
   const rows = Math.ceil(totalSeats / columns);
@@ -34,7 +37,6 @@ function SeatsCard({ showDetails: propShowDetails }) {
   const bookedSeats = showDetails.bookedSeats || [];
   const ticketPrice = showDetails.ticketPrice || 0;
 
-  // Handle selecting or unselecting seats (Max 6 seats limit)
   const handleSeatSelect = (seatNumber) => {
     if (bookedSeats.includes(seatNumber)) return;
 
@@ -52,7 +54,6 @@ function SeatsCard({ showDetails: propShowDetails }) {
     }
   };
 
-  // Smooth in-place state update on successful booking without full page reload
   const handleBookingSuccess = (newlyBookedSeats) => {
     setShowDetails((prev) => ({
       ...prev,
@@ -61,7 +62,6 @@ function SeatsCard({ showDetails: propShowDetails }) {
     setSelectedSeats([]);
   };
 
-  // Convert numeric seat number to Row + Column label (e.g. 1 -> A1, 21 -> B1)
   const getSeatLabel = (seatNum) => {
     const rowIndex = Math.floor((seatNum - 1) / columns);
     const colIndex = ((seatNum - 1) % columns) + 1;
@@ -72,17 +72,14 @@ function SeatsCard({ showDetails: propShowDetails }) {
   return (
     <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 select-none space-y-6">
       
-      {/* Seating Grid Card Container */}
       <div className="bg-white rounded-3xl border border-slate-200/90 p-6 sm:p-10 space-y-6">
 
-        {/* BookMyShow Style Category Price Header (Centered) */}
         <div className="border-b border-slate-100 pb-3 text-center">
           <p className="text-xs font-black text-slate-500 uppercase tracking-widest">
             STANDARD - ₹{ticketPrice}
           </p>
         </div>
 
-        {/* Cinema Seating Grid (6 Rows A-F x 20 Cols with Minimized Seat Text) */}
         <div className="overflow-x-auto pb-2 no-scrollbar max-w-full flex justify-center pt-2">
           <div className="space-y-2.5 min-w-[580px]">
             {Array.from({ length: rows }).map((_, rowIndex) => {
@@ -90,7 +87,6 @@ function SeatsCard({ showDetails: propShowDetails }) {
 
               return (
                 <div key={rowIndex} className="flex items-center justify-center">
-                  {/* Seats in Row (10 Seats | Center Aisle | 10 Seats) */}
                   <div className="flex items-center gap-1 sm:gap-1.5">
                     {Array.from({ length: columns }).map((_, colIndex) => {
                       const seatNumber = rowIndex * columns + colIndex + 1;
@@ -100,14 +96,11 @@ function SeatsCard({ showDetails: propShowDetails }) {
                       const isSelected = selectedSeats.includes(seatNumber);
                       const seatLabel = `${rowLetter}${colIndex + 1}`;
                       const isErrorOnThisSeat = maxSeatsErrorSeat === seatNumber;
-
-                      // Center Aisle Gap after 10th seat
                       const isCenterAisle = colIndex === 9;
 
                       return (
                         <React.Fragment key={seatNumber}>
                           <div className="relative flex items-center justify-center">
-                            {/* Simple Seat Tooltip Popup */}
                             {isErrorOnThisSeat && (
                               <div className="absolute -top-7 left-1/2 -translate-x-1/2 z-30 bg-slate-900 text-white text-[10px] font-bold px-2 py-0.5 rounded whitespace-nowrap pointer-events-none">
                                 Max 6 seats
@@ -130,7 +123,6 @@ function SeatsCard({ showDetails: propShowDetails }) {
                             </button>
                           </div>
 
-                          {/* Center Aisle Walkway Spacer */}
                           {isCenterAisle && (
                             <div className="w-3 sm:w-6 h-full pointer-events-none" />
                           )}
@@ -144,7 +136,6 @@ function SeatsCard({ showDetails: propShowDetails }) {
           </div>
         </div>
 
-        {/* Straight Cinema Screen Bar */}
         <div className="w-full flex flex-col items-center justify-center space-y-2 pt-4 pb-2">
           <p className="text-[11px] font-black text-slate-400 uppercase tracking-widest">
             SCREEN
@@ -152,7 +143,6 @@ function SeatsCard({ showDetails: propShowDetails }) {
           <div className="w-full max-w-xl h-1.5 bg-slate-900 rounded-full" />
         </div>
 
-        {/* Seat Status Legend below screen */}
         <div className="flex items-center justify-center gap-6 sm:gap-10 text-xs font-bold text-slate-600">
           <div className="flex items-center gap-2">
             <span className="w-3.5 h-3.5 rounded-md border border-slate-300 bg-white" />
@@ -172,11 +162,11 @@ function SeatsCard({ showDetails: propShowDetails }) {
 
       </div>
 
-      {/* Separated SeatsPrice Component */}
       <SeatsPrice
         selectedSeats={selectedSeats}
         ticketPrice={ticketPrice}
         showId={showDetails._id || showId}
+        showDetails={showDetails}
         getSeatLabel={getSeatLabel}
         onBookingSuccess={handleBookingSuccess}
       />

@@ -1,236 +1,185 @@
-import { useEffect, useState } from "react";
-import Navbar from "../../components/Navbar";
-import { GetShowDetails } from "../../api/show";
-import { useNavigate, useParams } from "react-router-dom";
-import { Card, Col, message, Row } from "antd";
-import { createBooking, makePayment } from "../../api/booking";
-import StripeCheckout from "react-stripe-checkout";
+import { useEffect, useState } from 'react';
+import Navbar from '../../components/Navbar';
+import { GetShowDetails } from '../../api/show';
+import { useParams } from 'react-router-dom';
+import { createBooking, makePayment } from '../../api/booking';
+import StripeCheckout from 'react-stripe-checkout';
+import TicketModal from './TicketModal';
 
-function BookShow() {
-    const params = useParams();
-    const showId = params.showId || params.id;
-    const navigate = useNavigate();
+function BookingInfo() {
+  const params = useParams();
+  const showId = params.showId || params.id;
 
-    const [showDetails, setShowDetails] = useState(null);
-    const [selectedSeats, setSelectedSeats] = useState([]);
-    const [loading, setLoading] = useState(false);
+  const [showDetails, setShowDetails] = useState(null);
+  const [selectedSeats, setSelectedSeats] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [ticketData, setTicketData] = useState(null);
+  const [errorMsg, setErrorMsg] = useState('');
 
-    useEffect(() => {
-        fetchShowData();
-    }, [showId]);
-
-    const fetchShowData = async () => {
-        if (showId) {
-            const showResponse = await GetShowDetails(showId);
-            if (showResponse && showResponse.data) {
-                setShowDetails(showResponse.data);
-            }
+  useEffect(() => {
+    if (showId) {
+      GetShowDetails(showId).then((res) => {
+        if (res && res.data) {
+          setShowDetails(res.data);
         }
-    };
+      });
+    }
+  }, [showId]);
 
-    // Direct booking flow without payment gateway
-    const handleBooking = async () => {
-        if (!selectedSeats || selectedSeats.length === 0) return;
+  const getSeatLabel = (seatNum) => {
+    const columns = 12;
+    const rowIndex = Math.floor((seatNum - 1) / columns);
+    const colIndex = ((seatNum - 1) % columns) + 1;
+    const rowLetter = String.fromCharCode(65 + rowIndex);
+    return `${rowLetter}${colIndex}`;
+  };
 
-        setLoading(true);
-        const mockTransactionId = `txn_${Date.now()}_${Math.floor(Math.random() * 1000)}`;
+  const onToken = async (token) => {
+    const amount = selectedSeats.length * (showDetails ? showDetails.ticketPrice : 0) * 100;
+    setLoading(true);
 
-        const bookingRequest = {
-            show: showId,
-            seats: [...selectedSeats],
-            transactionId: mockTransactionId
-        };
+    const response = await makePayment({ token: token.id, amount });
 
-        const bookingResponse = await createBooking(bookingRequest);
-        setLoading(false);
+    if (response && response.success) {
+      const bookingRequest = {
+        show: showId,
+        seats: [...selectedSeats],
+        transactionId: response.transactionId,
+        bookingDate: showDetails?.showDate
+      };
 
-        if (bookingResponse && bookingResponse.success) {
-            message.success(bookingResponse.message || "Booking created successfully");
-            navigate("/");
-        } else {
-            message.error(bookingResponse ? bookingResponse.message : "Booking failed");
-        }
-    };
+      const bookingResponse = await createBooking(bookingRequest);
+      setLoading(false);
 
-    // Stripe checkout payment flow
-    const onToken = async (token) => {
-        console.log("Token generated ", token);
+      if (bookingResponse && bookingResponse.success) {
+        setTicketData(bookingResponse.data || { _id: bookingResponse.message?.split(' ')?.pop(), transactionId: response.transactionId });
+      } else {
+        setErrorMsg(bookingResponse ? bookingResponse.message : 'Booking failed');
+      }
+    } else {
+      setLoading(false);
+      setErrorMsg(response ? response.message : 'Payment failed');
+    }
+  };
 
-        const paymentRequest = {
-            token: token.id,
-            amount: selectedSeats.length * (showDetails ? showDetails.ticketPrice : 0) * 100
-        };
+  const handleCloseTicketModal = () => {
+    setTicketData(null);
+  };
 
-        setLoading(true);
-        const response = await makePayment(paymentRequest);
+  const totalSeats = showDetails ? showDetails.totalSeats : 120;
+  const columns = 12;
+  const rows = Math.ceil(totalSeats / columns);
+  const bookedSeats = (showDetails && showDetails.bookedSeats) || [];
 
-        if (response && response.success) {
-            message.success(response.message || "Payment successful");
+  const handleSeatSelect = (seatNumber) => {
+    if (bookedSeats.includes(seatNumber)) return;
+    if (!selectedSeats.includes(seatNumber)) {
+      setSelectedSeats([...selectedSeats, seatNumber]);
+    } else {
+      setSelectedSeats(selectedSeats.filter((seat) => seat !== seatNumber));
+    }
+  };
 
-            const bookingRequest = {
-                show: showId,
-                seats: [...selectedSeats],
-                transactionId: response.transactionId
-            };
+  const stripeKey = (typeof process !== 'undefined' && process.env && process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY)
+    ? process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY
+    : (import.meta.env?.VITE_STRIPE_PUBLISHABLE_KEY || 'pk_test_51U5IIOP4CdTODxXhkTAL1UuG4TaF13mRILXYjzDCp2dKH9dE63iAmQbinoSXM50BfyJGa665uhdFtRRIfq1z4B8300I62rgUnc');
 
-            const bookingResponse = await createBooking(bookingRequest);
-            setLoading(false);
+  return (
+    <div className="min-h-screen bg-slate-50 text-slate-950">
+      <Navbar />
 
-            if (bookingResponse && bookingResponse.success) {
-                message.success(bookingResponse.message || "Booking created successfully");
-                navigate("/");
-            } else {
-                message.error(bookingResponse ? bookingResponse.message : "Booking failed");
-            }
-        } else {
-            setLoading(false);
-            message.error(response ? response.message : "Payment failed");
-        }
-    };
+      {ticketData && (
+        <TicketModal
+          bookingData={ticketData}
+          showDetails={showDetails}
+          selectedSeats={selectedSeats}
+          getSeatLabel={getSeatLabel}
+          onClose={handleCloseTicketModal}
+        />
+      )}
 
-    const getSeats = () => {
-        const totalSeats = showDetails ? showDetails.totalSeats : 120;
-        const columns = 12;
-        const rows = Math.ceil(totalSeats / columns);
-
-        let allRows = [];
-        for (let i = 0; i < rows; i++) {
-            allRows.push(i);
-        }
-
-        let allColumns = [];
-        for (let i = 0; i < columns; i++) {
-            allColumns.push(i);
-        }
-
-        const handleSeatSelect = (seatNumber) => {
-            if (!selectedSeats.includes(seatNumber)) {
-                setSelectedSeats([...selectedSeats, seatNumber]);
-                return;
-            }
-
-            const updatedSeats = selectedSeats.filter((seat) => seat !== seatNumber);
-            setSelectedSeats(updatedSeats);
-        };
-
-        const bookedSeats = (showDetails && showDetails.bookedSeats) || [];
-
-        return (
-            <div>
-                <div className="seat-ul">
-                    {allRows.map((row) => (
-                        <div key={row} className="seat-ul">
-                            {allColumns.map((col) => {
-                                let seatNumber = row * columns + col + 1;
-                                let seatClass = "seat-btn";
-
-                                const isSeatBooked = bookedSeats.includes(seatNumber);
-                                const isSeatSelected = selectedSeats.includes(seatNumber);
-
-                                if (isSeatBooked) {
-                                    seatClass += " booked";
-                                }
-
-                                if (isSeatSelected) {
-                                    seatClass += " selected";
-                                }
-
-                                return (
-                                    <button
-                                        key={seatNumber}
-                                        disabled={isSeatBooked}
-                                        onClick={() => handleSeatSelect(seatNumber)}
-                                        className={seatClass}
-                                    >
-                                        {`${seatNumber}`}
-                                    </button>
-                                );
-                            })}
-                        </div>
-                    ))}
-                </div>
-
-                <div className="mt-3 mx-auto bottom-card max-width-600">
-                    <div> Selected Seats : <span> {selectedSeats.join(", ")} </span> </div>
-                    <div> Total Price : Rs. <span> {selectedSeats.length * (showDetails ? showDetails.ticketPrice : 0)} </span> </div>
-                </div>
-            </div>
-        );
-    };
-
-    return (
-        <div>
-            <Navbar />
-
-            {showDetails == null && (
-                <div className="text-center">
-                    <h2> Fetching Seat View ....</h2>
-                </div>
-            )}
-
-            {showDetails && (
-                <div>
-                    <Row>
-                        <Col>
-                            <Card
-                                title={
-                                    <div>
-                                        <h1> {showDetails.movie ? showDetails.movie.movieName : ''} </h1>
-                                        <p> {showDetails.theatre ? showDetails.theatre.name : ''} </p>
-                                        <p> {showDetails.theatre ? showDetails.theatre.address : ''} </p>
-                                    </div>
-                                }
-                                extra={
-                                    <div className="ms-3">
-                                        <div>
-                                            <h4> Date : {showDetails.showDate} </h4>
-                                        </div>
-                                        <div>
-                                            <h4> Time : {showDetails.showTime} </h4>
-                                        </div>
-                                        <div>
-                                            <h4> Ticket Price : {showDetails.ticketPrice} </h4>
-                                        </div>
-                                        <div>
-                                            <h4>
-                                                Total Seats : {showDetails.totalSeats} | Available Seats : {showDetails.totalSeats - (showDetails.bookedSeats || []).length}
-                                            </h4>
-                                        </div>
-                                    </div>
-                                }
-                                style={{ width: "100vw" }}
-                            >
-                                {getSeats()}
-                            </Card>
-                        </Col>
-                    </Row>
-
-                    {selectedSeats.length > 0 && (
-                        <div className="text-center my-4 flex items-center justify-center gap-4">
-                            <button
-                                disabled={loading}
-                                onClick={handleBooking}
-                                className="px-6 py-2 bg-slate-900 text-white rounded-lg cursor-pointer hover:bg-slate-800 disabled:opacity-60"
-                            >
-                                {loading ? "Booking..." : "Book Seats Directly"}
-                            </button>
-
-                            <StripeCheckout
-                                token={onToken}
-                                stripeKey={(typeof process !== 'undefined' && process.env && process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY) ? process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY : (import.meta.env?.VITE_STRIPE_PUBLISHABLE_KEY || "pk_test_51U5IIOP4CdTODxXhkTAL1UuG4TaF13mRILXYjzDCp2dKH9dE63iAmQbinoSXM50BfyJGa665uhdFtRRIfq1z4B8300I62rgUnc")}
-                                amount={selectedSeats.length * (showDetails ? showDetails.ticketPrice : 0) * 100}
-                                currency="INR"
-                            >
-                                <button className="px-6 py-2 bg-emerald-600 text-white rounded-lg cursor-pointer hover:bg-emerald-700">
-                                    Pay with Card (Stripe)
-                                </button>
-                            </StripeCheckout>
-                        </div>
-                    )}
-                </div>
-            )}
+      {errorMsg && (
+        <div className="fixed top-8 left-1/2 -translate-x-1/2 z-50 bg-red-600 text-white text-xs font-bold px-5 py-2.5 rounded-full shadow-md">
+          {errorMsg}
         </div>
-    );
+      )}
+
+      {!showDetails ? (
+        <div className="text-center py-12 text-slate-500 font-semibold text-sm">
+          Loading show details...
+        </div>
+      ) : (
+        <div className="max-w-5xl mx-auto p-6 space-y-6">
+          <div className="bg-white rounded-3xl border border-slate-200 p-6 flex items-center justify-between">
+            <div>
+              <h1 className="text-xl font-bold text-slate-950">{showDetails.movie ? showDetails.movie.movieName : ''}</h1>
+              <p className="text-xs text-slate-500">{showDetails.theatre ? showDetails.theatre.name : ''} - {showDetails.theatre ? showDetails.theatre.address : ''}</p>
+            </div>
+            <div className="text-right text-xs font-bold text-slate-700">
+              <p>Date: {showDetails.showDate}</p>
+              <p>Time: {showDetails.showTime}</p>
+              <p>Price: ₹{showDetails.ticketPrice}</p>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-3xl border border-slate-200 p-6 space-y-4 text-center">
+            <div className="space-y-2">
+              {Array.from({ length: rows }).map((_, rowIndex) => (
+                <div key={rowIndex} className="flex justify-center gap-1.5">
+                  {Array.from({ length: columns }).map((_, colIndex) => {
+                    const seatNumber = rowIndex * columns + colIndex + 1;
+                    if (seatNumber > totalSeats) return null;
+                    const isBooked = bookedSeats.includes(seatNumber);
+                    const isSelected = selectedSeats.includes(seatNumber);
+
+                    return (
+                      <button
+                        key={seatNumber}
+                        disabled={isBooked}
+                        onClick={() => handleSeatSelect(seatNumber)}
+                        className={`w-7 h-7 rounded-md text-xs font-bold transition-all cursor-pointer ${
+                          isBooked
+                            ? 'bg-slate-200 text-slate-400 cursor-not-allowed'
+                            : isSelected
+                            ? 'bg-slate-950 text-white'
+                            : 'bg-white text-slate-700 border border-slate-200 hover:bg-slate-50'
+                        }`}
+                      >
+                        {seatNumber}
+                      </button>
+                    );
+                  })}
+                </div>
+              ))}
+            </div>
+
+            {selectedSeats.length > 0 && (
+              <div className="pt-4 flex items-center justify-between border-t border-slate-100">
+                <div className="text-left text-xs font-bold text-slate-700">
+                  <p>Selected: {selectedSeats.map(getSeatLabel).join(', ')}</p>
+                  <p>Total: ₹{selectedSeats.length * showDetails.ticketPrice}</p>
+                </div>
+
+                <StripeCheckout
+                  token={onToken}
+                  stripeKey={stripeKey}
+                  amount={selectedSeats.length * showDetails.ticketPrice * 100}
+                  currency="INR"
+                >
+                  <button
+                    disabled={loading}
+                    className="px-6 py-2.5 bg-slate-950 text-white text-xs font-bold rounded-xl cursor-pointer hover:bg-slate-800 disabled:opacity-60"
+                  >
+                    {loading ? 'Processing...' : 'Pay with Card'}
+                  </button>
+                </StripeCheckout>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  );
 }
 
-export default BookShow;
+export default BookingInfo;
