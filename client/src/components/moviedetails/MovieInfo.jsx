@@ -51,10 +51,10 @@ function MovieInfo() {
                     <p className="text-red-600 font-bold mb-4">{error}</p>
                     <button
                         type="button"
-                        onClick={() => navigate('/main-home')}
+                        onClick={() => navigate(-1)}
                         className="px-6 py-2.5 bg-slate-950 text-white text-xs font-bold rounded-xl hover:bg-slate-800 transition-colors cursor-pointer"
                     >
-                        Back to Home
+                        Go Back
                     </button>
                 </div>
             ) : movie && (

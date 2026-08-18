@@ -75,6 +75,9 @@ function SeatsPrice({ selectedSeats, ticketPrice, showId, showDetails, getSeatLa
           }
 
           setTicketData(fullBookingTicket);
+        } else {
+          setErrorPopup(bookingResponse ? bookingResponse.message : 'Booking failed');
+          setTimeout(() => setErrorPopup(''), 4000);
         }
       } else {
         setLoading(false);
@@ -97,7 +100,6 @@ function SeatsPrice({ selectedSeats, ticketPrice, showId, showDetails, getSeatLa
     if (onBookingSuccess) {
       onBookingSuccess(seatsToClear);
     }
-    navigate('/my-bookings');
   };
 
   const stripeKey = (typeof process !== 'undefined' && process.env && process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY)

@@ -20,7 +20,6 @@ function ProtectedRoute() {
 function PublicRoute() {
   return isAuthenticated() ? <Navigate to="/main-home" replace /> : <Outlet />;
 }
-
 function AppRoutes() {
   return (
     <Routes>

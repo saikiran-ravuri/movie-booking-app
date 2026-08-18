@@ -6,17 +6,7 @@ import Footer from '../components/mainhome/Footer';
 
 function MainHome() {
   useEffect(() => {
-    // stop back navigation when logged in
-    window.history.pushState(null, '', window.location.href);
-
-    const handlePopState = () => {
-      window.history.pushState(null, '', window.location.href);
-    };
-
-    window.addEventListener('popstate', handlePopState);
-    return () => {
-      window.removeEventListener('popstate', handlePopState);
-    };
+    window.scrollTo(0, 0);
   }, []);
 
   return (

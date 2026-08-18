@@ -23,8 +23,13 @@ const verifyToken = (req, res, next) => {
                 return res.status(404).send({ success: false, message: "User account no longer exists" });
             }
             req.userDetails = userDetails;
+            req.userId = userId;
+            if (!req.body) {
+                req.body = {};
+            }
             req.body.userId = userId;
             next();
+
         } catch (err) {
             return res.status(500).send({ success: false, message: "Internal Server Error" });
         }

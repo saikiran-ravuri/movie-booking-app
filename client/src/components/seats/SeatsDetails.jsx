@@ -21,7 +21,7 @@ function SeatsDetails({ showDetails: propShowDetails }) {
     } else if (showId) {
       const fetchDetails = async () => {
         setLoading(true);
-        const res = await GetShowDetails(showId);
+        const res = await GetShowDetails(showId, queryDate);
         if (res?.data) {
           const data = { ...res.data };
           if (queryDate) data.showDate = queryDate;

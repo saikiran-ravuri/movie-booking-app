@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const MovieModel = require("../Models/movieModel");
 const ShowModel = require("../Models/showModle");
 const TheatreModel = require("../Models/theatreModel");
+const BookingsModel = require("../Models/bookingModel");
 
 // create new show
 const createNewShow = async (req, res) => {
@@ -83,10 +84,32 @@ const getShowById = async (req, res) => {
             });
         }
 
+        const showObj = showDetails.toObject();
+        const targetDate = req.query.date || req.query.showDate;
+
+        if (targetDate) {
+            const dateBookings = await BookingsModel.find({
+                show: showId,
+                $or: [
+                    { bookingDate: targetDate },
+                    { bookingDate: { $regex: `^${targetDate}` } }
+                ]
+            });
+
+            let dateBookedSeats = [];
+            dateBookings.forEach((b) => {
+                if (Array.isArray(b.seats)) {
+                    dateBookedSeats.push(...b.seats);
+                }
+            });
+
+            showObj.bookedSeats = dateBookedSeats;
+        }
+
         return res.status(200).send({
             success: true,
             message: "Show Data Fetched Successfully",
-            data: showDetails,
+            data: showObj,
         });
     } catch (err) {
         return res.status(500).send({

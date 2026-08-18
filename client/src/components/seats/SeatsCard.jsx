@@ -15,7 +15,7 @@ function SeatsCard({ showDetails: propShowDetails }) {
   useEffect(() => {
     if (!propShowDetails && showId) {
       const fetchDetails = async () => {
-        const res = await GetShowDetails(showId);
+        const res = await GetShowDetails(showId, queryDate);
         if (res?.data) {
           const data = { ...res.data };
           if (queryDate) data.showDate = queryDate;

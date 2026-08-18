@@ -1,5 +1,7 @@
 const BookingsModel = require("../Models/bookingModel");
 const ShowModel = require("../Models/showModle");
+const MovieModel = require("../Models/movieModel");
+const TheatreModel = require("../Models/theatreModel");
 const { sendEmail } = require("../utils/EmailUtils");
 const { bookingConfirmationTemplate } = require("../Templates/bookingConfirmation");
 require('dotenv').config();
@@ -49,11 +51,11 @@ const makePayment = async (req, res) => {
 
 // create booking
 const createBooking = async (req, res) => {
-    const { show, seats, transactionId } = req.body;
+    const { show, seats, transactionId, bookingDate } = req.body;
     const userId = req.userDetails._id;
 
     try {
-        const newBooking = new BookingsModel({ show, seats, transactionId, user: userId });
+        const newBooking = new BookingsModel({ show, seats, transactionId, user: userId, bookingDate });
         const newBookingResponse = await newBooking.save();
 
         const showDetails = await ShowModel.findById(show).populate("movie").populate("theatre");
@@ -84,7 +86,32 @@ const createBooking = async (req, res) => {
     }
 };
 
+// get all bookings for a user
+const getAllBookings = async (req, res) => {
+    try {
+        const bookings = await BookingsModel.find({ user: req.userDetails._id })
+            .populate({
+                path: "show",
+                populate: [
+                    { path: "movie" },
+                    { path: "theatre" }
+                ]
+            })
+            .sort({ createdAt: -1 });
+
+        return res.status(200).send({
+            success: true,
+            message: "Bookings fetched successfully",
+            data: bookings
+        });
+    } catch (err) {
+        console.error("Error in getAllBookings:", err);
+        return res.status(500).send({ success: false, message: "Internal Server Error", err: err.message });
+    }
+};
+
 module.exports = {
     createBooking,
-    makePayment
-};
+    makePayment,
+    getAllBookings
+};

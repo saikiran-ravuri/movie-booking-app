@@ -2,21 +2,20 @@ import { axiosInstance } from './axiosInstance';
 
 export const GetShowsByMovieId = async (movieId, date) => {
     try {
-        const query = date ? `?showDate=${date}` : '';
-        const response = await axiosInstance.get(`/api/shows/movies/${movieId}${query}`);
+        const url = date ? `/api/shows/movies/${movieId}?showDate=${date}` : `/api/shows/movies/${movieId}`;
+        const response = await axiosInstance.get(url);
         return response.data;
     } catch (err) {
-        console.log(err);
-        return err.response ? err.response.data : { success: false, message: err.message };
+        return err.response?.data || { success: false, message: err.message };
     }
 };
 
-export const GetShowDetails = async (showId) => {
+export const GetShowDetails = async (showId, date) => {
     try {
-        const response = await axiosInstance.get(`/api/shows/${showId}`);
+        const url = date ? `/api/shows/${showId}?date=${date}` : `/api/shows/${showId}`;
+        const response = await axiosInstance.get(url);
         return response.data;
     } catch (err) {
-        console.log(err);
-        return err.response ? err.response.data : { success: false, message: err.message };
+        return err.response?.data || { success: false, message: err.message };
     }
 };
