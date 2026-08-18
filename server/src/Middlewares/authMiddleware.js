@@ -1,15 +1,14 @@
 const jwt = require("jsonwebtoken");
 const UserModel = require("../Models/userModel");
 
+// verify token
 const verifyToken = (req, res, next) => {
-    // fetch the token from header (x-access-token or Authorization Bearer)
     const token = req.headers['x-access-token'] || (req.headers.authorization && req.headers.authorization.split(' ')[1]);
 
     if (!token) {
         return res.status(400).send({ success: false, message: "JWT token is not passed" });
     }
 
-    // verify token with secret key
     const secretKey = process.env.jwt_secret || process.env.SECRET_KEY;
     jwt.verify(token, secretKey, async (err, payload) => {
         if (err) {
@@ -32,6 +31,7 @@ const verifyToken = (req, res, next) => {
     });
 };
 
+// verify admin
 const verifyAdmin = (req, res, next) => {
     if (!req.userDetails || req.userDetails.role !== 'admin') {
         const userId = req.userDetails ? req.userDetails._id : 'unknown';

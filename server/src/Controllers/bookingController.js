@@ -1,10 +1,13 @@
 const BookingsModel = require("../Models/bookingModel");
 const ShowModel = require("../Models/showModle");
+const { sendEmail } = require("../utils/EmailUtils");
+const { bookingConfirmationTemplate } = require("../Templates/bookingConfirmation");
 require('dotenv').config();
 
 const stripeSecretKey = process.env.STRIPE_SECRET_KEY || process.env.stripe_key;
 const stripe = stripeSecretKey ? require('stripe')(stripeSecretKey) : null;
 
+// make payment
 const makePayment = async (req, res) => {
     const { token, amount } = req.body;
 
@@ -12,7 +15,6 @@ const makePayment = async (req, res) => {
 
     try {
         if (!stripe) {
-            // Mock transaction fallback when Stripe key is not set in environment
             const mockTransactionId = `txn_${Date.now()}_${Math.floor(Math.random() * 1000)}`;
             return res.status(200).send({
                 success: true,
@@ -21,13 +23,11 @@ const makePayment = async (req, res) => {
             });
         }
 
-        // create a new stripe customer 
         const customer = await stripe.customers.create({
             email: req.userDetails.email,
             source: token
         });
 
-        // create the payment intent 
         const paymentIntent = await stripe.paymentIntents.create({
             customer: customer.id,
             amount: amount,
@@ -47,6 +47,7 @@ const makePayment = async (req, res) => {
     }
 };
 
+// create booking
 const createBooking = async (req, res) => {
     const { show, seats, transactionId } = req.body;
     const userId = req.userDetails._id;
@@ -62,6 +63,15 @@ const createBooking = async (req, res) => {
         await ShowModel.findByIdAndUpdate(show, {
             bookedSeats: updatedBookedSeats
         });
+
+        // send booking confirmation email
+        const { subject, body } = bookingConfirmationTemplate(
+            req.userDetails,
+            showDetails,
+            newBookingResponse
+        );
+
+        sendEmail([req.userDetails.email], subject, body);
 
         return res.status(201).send({
             success: true,

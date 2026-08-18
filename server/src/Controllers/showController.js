@@ -3,6 +3,7 @@ const MovieModel = require("../Models/movieModel");
 const ShowModel = require("../Models/showModle");
 const TheatreModel = require("../Models/theatreModel");
 
+// create new show
 const createNewShow = async (req, res) => {
     const { theatre, movie } = req.body;
 
@@ -42,6 +43,7 @@ const createNewShow = async (req, res) => {
     }
 };
 
+// get all shows
 const getAllShows = async (req, res) => {
     try {
         const allShows = await ShowModel.find({}).populate("theatre").populate("movie");
@@ -60,6 +62,7 @@ const getAllShows = async (req, res) => {
     }
 };
 
+// get show by id
 const getShowById = async (req, res) => {
     try {
         const showId = req.params.id;
@@ -94,6 +97,7 @@ const getShowById = async (req, res) => {
     }
 };
 
+// get theatres and shows by movie id
 const getTheatesAndShowsByMovieId = async (req, res) => {
     try {
         const movieId = req.params.movieId;
@@ -105,7 +109,6 @@ const getTheatesAndShowsByMovieId = async (req, res) => {
             });
         }
 
-        // Fetch all shows for this movie so all theaters & showtimes render for all dates!
         const allShows = await ShowModel.find({ movie: movieId }).populate('theatre').populate('movie');
 
         let showsByTheatreId = {};

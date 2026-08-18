@@ -1,5 +1,6 @@
 const TheatreModel = require("../Models/theatreModel");
 
+// create theatre
 const createTheatre = async (req, res) => {
     if (req.userDetails && req.userDetails._id) {
         req.body.theatreOwner = req.userDetails._id;
@@ -19,6 +20,7 @@ const createTheatre = async (req, res) => {
     }
 };
 
+// get all theatres
 const fetchAllTheatres = async (req, res) => {
     try {
         const allTheatres = await TheatreModel.find({}).populate("theatreOwner");
