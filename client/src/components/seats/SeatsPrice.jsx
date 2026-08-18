@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import StripeCheckout from 'react-stripe-checkout';
 import { createBooking, makePayment } from '../../api/booking';
 import TicketModal from '../booking/TicketModal';
 
 function SeatsPrice({ selectedSeats, ticketPrice, showId, showDetails, getSeatLabel, onBookingSuccess }) {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const queryDate = searchParams.get('date');
   const [successPopup, setSuccessPopup] = useState(false);
   const [errorPopup, setErrorPopup] = useState('');
   const [loading, setLoading] = useState(false);
@@ -16,9 +18,10 @@ function SeatsPrice({ selectedSeats, ticketPrice, showId, showDetails, getSeatLa
 
   const activeSeats = ticketData ? bookedSeatsList : selectedSeats;
   const totalPrice = activeSeats.length * ticketPrice;
+  const bookingShowDate = showDetails?.showDate || queryDate || new Date().toISOString().split('T')[0];
 
   const onToken = async (token) => {
-    const userToken = localStorage.getItem('accessToken');
+    const userToken = localStorage.getItem('accessToken') || localStorage.getItem('token');
     if (!userToken) {
       navigate('/login');
       return;
@@ -37,7 +40,7 @@ function SeatsPrice({ selectedSeats, ticketPrice, showId, showDetails, getSeatLa
           show: showId,
           seats: [...selectedSeats],
           transactionId: paymentResponse.transactionId || paymentResponse.data,
-          bookingDate: showDetails?.showDate
+          bookingDate: bookingShowDate
         };
 
         const bookingResponse = await createBooking(bookingRequest);
@@ -47,11 +50,31 @@ function SeatsPrice({ selectedSeats, ticketPrice, showId, showDetails, getSeatLa
           setSuccessPopup(true);
           setBookedSeatsList([...selectedSeats]);
 
-          const bookingObj = bookingResponse.data || {
-            _id: bookingResponse.message?.split(' ')?.pop() || 'BK' + Date.now(),
-            transactionId: paymentResponse.transactionId
+          const uniqueId = (bookingResponse.data && (bookingResponse.data._id || bookingResponse.data.id)) ||
+            (bookingResponse.booking && bookingResponse.booking._id) ||
+            'BK_' + Date.now() + '_' + Math.random().toString(36).substring(2, 7);
+
+          const fullBookingTicket = {
+            _id: uniqueId,
+            show: {
+              ...showDetails,
+              showDate: bookingShowDate
+            },
+            seats: [...selectedSeats],
+            transactionId: paymentResponse.transactionId || 'TXN' + Date.now(),
+            bookingDate: bookingShowDate,
+            totalPaid: totalPrice
           };
-          setTicketData(bookingObj);
+
+          try {
+            const savedBookings = JSON.parse(localStorage.getItem('myBookingsList') || '[]');
+            const updatedBookings = [fullBookingTicket, ...savedBookings.filter(b => b._id !== fullBookingTicket._id)];
+            localStorage.setItem('myBookingsList', JSON.stringify(updatedBookings));
+          } catch (e) {
+            console.error("Storage error:", e);
+          }
+
+          setTicketData(fullBookingTicket);
         }
       } else {
         setLoading(false);
@@ -74,6 +97,7 @@ function SeatsPrice({ selectedSeats, ticketPrice, showId, showDetails, getSeatLa
     if (onBookingSuccess) {
       onBookingSuccess(seatsToClear);
     }
+    navigate('/my-bookings');
   };
 
   const stripeKey = (typeof process !== 'undefined' && process.env && process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY)
@@ -85,7 +109,10 @@ function SeatsPrice({ selectedSeats, ticketPrice, showId, showDetails, getSeatLa
       {ticketData && (
         <TicketModal
           bookingData={ticketData}
-          showDetails={showDetails}
+          showDetails={{
+            ...showDetails,
+            showDate: ticketData.bookingDate || showDetails?.showDate
+          }}
           selectedSeats={activeSeats}
           getSeatLabel={getSeatLabel}
           onClose={handleCloseTicketModal}

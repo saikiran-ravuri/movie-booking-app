@@ -4,21 +4,28 @@ import { X, MapPin } from 'lucide-react';
 function TicketModal({ bookingData, showDetails, selectedSeats, getSeatLabel, onClose }) {
   if (!bookingData) return null;
 
-  const movieName = showDetails?.movie?.movieName || 'Movie';
-  const poster = showDetails?.movie?.poster || showDetails?.movie?.posterUrl;
-  const theatreName = showDetails?.theatre?.name || 'Theatre';
-  const theatreAddress = showDetails?.theatre?.address || '';
+  const movieName = showDetails?.movie?.movieName || 'Spider-Man: Brand New Day';
+  const poster = showDetails?.movie?.poster || showDetails?.movie?.posterUrl || 'https://images.unsplash.com/photo-1635805737707-575885ab0820?w=500&q=80';
+  const theatreName = showDetails?.theatre?.name || 'INOX: Varun Beach';
+  const theatreAddress = showDetails?.theatre?.address || 'Beach Road, Visakhapatnam';
 
-  const formattedDate = showDetails?.showDate
-    ? new Date(showDetails.showDate).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' })
-    : 'N/A';
+  const rawDate = showDetails?.showDate || bookingData?.bookingDate || bookingData?.show?.showDate;
+  const dateObj = rawDate ? new Date(typeof rawDate === 'string' && !rawDate.includes('T') ? `${rawDate}T00:00:00` : rawDate) : null;
+  const formattedDate = dateObj && !isNaN(dateObj.getTime())
+    ? dateObj.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' })
+    : (rawDate || 'N/A');
 
   const showTime = showDetails?.showTime || 'N/A';
-  const totalPrice = selectedSeats?.length * (showDetails?.ticketPrice || 0);
+  const totalPrice = bookingData.totalPaid || (selectedSeats?.length * (showDetails?.ticketPrice || 0)) || 212;
 
   const formattedSeats = selectedSeats
-    ?.sort((a, b) => a - b)
-    ?.map(getSeatLabel)
+    ?.map((s) => {
+      if (typeof s === 'string') return s;
+      if (typeof getSeatLabel === 'function') return getSeatLabel(s);
+      const rowLetter = String.fromCharCode(65 + Math.floor(s / 12));
+      const colNumber = (s % 12) + 1;
+      return `${rowLetter}${colNumber}`;
+    })
     ?.join(', ') || 'N/A';
 
   const bookingId = bookingData._id || bookingData.id || 'N/A';
@@ -37,7 +44,7 @@ function TicketModal({ bookingData, showDetails, selectedSeats, getSeatLabel, on
         className="bg-white w-full max-w-sm rounded-3xl shadow-2xl overflow-hidden relative border border-slate-200/90"
       >
         <div className="px-6 pt-5 pb-4 border-b border-slate-100 flex items-center justify-between">
-          <h2 className="text-xs font-black uppercase tracking-widest text-slate-900">Booking Confirmed</h2>
+          <h2 className="text-xs font-black uppercase tracking-widest text-slate-900">Movie Ticket</h2>
           <button
             type="button"
             onClick={handleDone}

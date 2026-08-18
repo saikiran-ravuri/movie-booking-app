@@ -17,7 +17,9 @@ function SeatsCard({ showDetails: propShowDetails }) {
       const fetchDetails = async () => {
         const res = await GetShowDetails(showId, queryDate);
         if (res && res.data) {
-          setShowDetails(res.data);
+          const data = { ...res.data };
+          if (queryDate) data.showDate = queryDate;
+          setShowDetails(data);
         }
       };
       fetchDetails();

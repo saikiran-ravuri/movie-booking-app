@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { LoginUser } from '../../api/users';
-
 import { Eye, EyeOff, AlertCircle, CheckCircle2 } from 'lucide-react';
 
 function Login({ isModal = false, onCloseModal, onSwitchToSignUp, onSwitchToForgot }) {
@@ -28,7 +27,6 @@ function Login({ isModal = false, onCloseModal, onSwitchToSignUp, onSwitchToForg
     setError('');
     setSuccessMsg('');
 
-    // client side validation
     if (!formData.email.trim()) {
       setError('Please enter your email address');
       return;
@@ -50,23 +48,24 @@ function Login({ isModal = false, onCloseModal, onSwitchToSignUp, onSwitchToForg
     setLoading(true);
 
     try {
-      // call backend login user api
       const response = await LoginUser(formData);
       setLoading(false);
 
       if (response.success) {
         setSuccessMsg(response.message);
 
-        // save jwt access token and user name in local storage
         const accessToken = response.accessToken || response.accesstoken || response.data || response.token;
         if (accessToken) {
           localStorage.setItem('accessToken', accessToken);
+          localStorage.setItem('token', accessToken);
         }
         if (response.userName) {
           localStorage.setItem('userName', response.userName);
         }
+        if (formData.email) {
+          localStorage.setItem('userEmail', formData.email);
+        }
 
-        // fast smooth redirect on login success
         setTimeout(() => {
           if (onCloseModal) onCloseModal();
           navigate('/main-home');
@@ -82,12 +81,10 @@ function Login({ isModal = false, onCloseModal, onSwitchToSignUp, onSwitchToForg
 
   const formContent = (
     <div className="w-full space-y-5">
-      {/* Title */}
       <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-950 leading-tight text-center">
         Login
       </h1>
 
-      {/* Error Alert */}
       {error && (
         <div className="p-3 rounded-lg bg-red-50 border border-red-200 text-red-700 text-xs flex items-center gap-2">
           <AlertCircle className="w-4 h-4 text-red-600 shrink-0" />
@@ -95,7 +92,6 @@ function Login({ isModal = false, onCloseModal, onSwitchToSignUp, onSwitchToForg
         </div>
       )}
 
-      {/* Success Alert */}
       {successMsg && (
         <div className="p-3 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs flex items-center gap-2">
           <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
@@ -103,10 +99,7 @@ function Login({ isModal = false, onCloseModal, onSwitchToSignUp, onSwitchToForg
         </div>
       )}
 
-      {/* Form */}
       <form onSubmit={handleSubmit} className="space-y-4">
-
-        {/* Email Field */}
         <div>
           <label className="block text-xs font-semibold text-slate-700 mb-1">
             Email Address
@@ -122,7 +115,6 @@ function Login({ isModal = false, onCloseModal, onSwitchToSignUp, onSwitchToForg
           />
         </div>
 
-        {/* Password Field */}
         <div>
           <div className="flex items-center justify-between mb-1">
             <label className="block text-xs font-semibold text-slate-700">
@@ -157,7 +149,6 @@ function Login({ isModal = false, onCloseModal, onSwitchToSignUp, onSwitchToForg
           </div>
         </div>
 
-        {/* Submit Button */}
         <div className="pt-2">
           <button
             type="submit"
@@ -169,7 +160,6 @@ function Login({ isModal = false, onCloseModal, onSwitchToSignUp, onSwitchToForg
         </div>
       </form>
 
-      {/* Sign Up Option */}
       <div className="text-center text-xs text-slate-600 pt-1">
         Don't have an account?{' '}
         <button
