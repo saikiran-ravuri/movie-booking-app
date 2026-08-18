@@ -10,10 +10,8 @@ const GithubIcon = (props) => (
 
 function Footer() {
   return (
-    <footer className="w-full bg-white border-t border-slate-200/90 px-4 sm:px-6 lg:px-8 py-6 mt-12 sm:mt-20 select-none">
+    <footer className="w-full bg-white border-t border-slate-200 px-4 sm:px-6 lg:px-8 py-6 mt-12 sm:mt-20 select-none">
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-
-        {/* Left: Logo & Title matching Navbar */}
         <div className="flex items-center gap-2.5">
           <div className="relative w-8 h-8 rounded-xl bg-slate-950 flex items-center justify-center text-white shadow-xs shrink-0">
             <Clapperboard className="w-4 h-4 text-white stroke-[1.75]" />
@@ -24,30 +22,22 @@ function Footer() {
           </span>
         </div>
 
-        {/* Center: Copyright */}
-        <p className="text-xs text-slate-400 font-medium text-center">
-          © {new Date().getFullYear()} Movie Booking Application. All rights reserved.
-        </p>
-
-        {/* Right: Separated Developer Name Badge & GitHub Link */}
         <div className="flex items-center gap-2 shrink-0">
-          {/* Developer Name Badge */}
-          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-50 border border-slate-200/80 text-[11px] font-semibold text-slate-700">
+          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-50 border border-slate-200 text-[11px] font-semibold text-slate-700">
             <span>Developed by <strong className="text-slate-950">SaiKiran Ravuri</strong></span>
           </div>
 
-          {/* Separate GitHub Icon Link Button */}
           <a
             href="https://github.com/saikiran-ravuri"
             target="_blank"
             rel="noopener noreferrer"
-            className="p-1.5 rounded-full bg-slate-50 border border-slate-200/80 hover:bg-slate-950 hover:text-white text-slate-700 transition-all cursor-pointer shadow-xs active:scale-95 flex items-center justify-center group"
+            className="p-1.5 rounded-full bg-slate-50 border border-slate-200 hover:bg-slate-950 hover:text-white text-slate-700 transition-all cursor-pointer shadow-2xs active:scale-95 flex items-center justify-center group"
             title="View GitHub Profile"
+            aria-label="GitHub Profile"
           >
             <GithubIcon className="w-4 h-4 group-hover:scale-110 transition-transform" />
           </a>
         </div>
-
       </div>
     </footer>
   );

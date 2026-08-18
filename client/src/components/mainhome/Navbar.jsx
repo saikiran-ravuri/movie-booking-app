@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Search, ChevronRight, Clapperboard, Film, ChevronDown } from 'lucide-react';
-import { useNavigate, Link, NavLink } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { Search, ChevronRight, Clapperboard, Film, User } from 'lucide-react';
 import { FetchAllMovies } from '../../api/movie';
 
 function Navbar({ username = 'User' }) {
@@ -13,13 +13,17 @@ function Navbar({ username = 'User' }) {
   const dropdownRef = useRef(null);
   const searchRef = useRef(null);
 
-  const userName = localStorage.getItem('userName') || username || 'User';
+  const userName = localStorage.getItem('userName') || username;
 
   useEffect(() => {
     const loadMovies = async () => {
-      const res = await FetchAllMovies();
-      if (res && res.data) {
-        setAllMovies(res.data);
+      try {
+        const res = await FetchAllMovies();
+        if (res && res.data) {
+          setAllMovies(res.data);
+        }
+      } catch (err) {
+        console.error('Failed to load movies for search:', err);
       }
     };
     loadMovies();
@@ -35,7 +39,7 @@ function Navbar({ username = 'User' }) {
       }
     };
 
-    const handleEscape = (event) => {
+    const handleKeyDown = (event) => {
       if (event.key === 'Escape') {
         setIsDropdownOpen(false);
         setIsSearchFocused(false);
@@ -43,10 +47,11 @@ function Navbar({ username = 'User' }) {
     };
 
     document.addEventListener('mousedown', handleClickOutside);
-    document.addEventListener('keydown', handleEscape);
+    document.addEventListener('keydown', handleKeyDown);
+
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
-      document.removeEventListener('keydown', handleEscape);
+      document.removeEventListener('keydown', handleKeyDown);
     };
   }, []);
 
@@ -59,15 +64,14 @@ function Navbar({ username = 'User' }) {
     navigate('/');
   };
 
-  const searchResults = searchQuery.trim()
-    ? allMovies.filter((movie) => {
-      const query = searchQuery.trim().toLowerCase();
-      return (
+  const query = searchQuery.trim().toLowerCase();
+  const searchResults = query
+    ? allMovies.filter(
+      (movie) =>
         movie.movieName?.toLowerCase().includes(query) ||
         movie.language?.toLowerCase().includes(query) ||
         (Array.isArray(movie.genre) && movie.genre.some((g) => g.toLowerCase().includes(query)))
-      );
-    })
+    )
     : [];
 
   return (
@@ -91,12 +95,12 @@ function Navbar({ username = 'User' }) {
             onChange={(e) => setSearchQuery(e.target.value)}
             onFocus={() => setIsSearchFocused(true)}
             placeholder="Search movies..."
-            className="w-full bg-white border border-slate-300 text-slate-900 text-xs font-medium rounded-full pl-9 pr-4 py-2 focus:outline-none focus:border-slate-400 transition-all placeholder:text-slate-400"
+            className="w-full bg-slate-50 border border-slate-200 text-slate-900 text-xs font-medium rounded-full pl-9 pr-4 py-2 focus:outline-none focus:bg-white focus:border-slate-950 transition-all placeholder:text-slate-400"
           />
         </div>
 
-        {searchQuery.trim().length > 0 && isSearchFocused && (
-          <div className="absolute left-0 top-[calc(100%+6px)] z-50 w-full overflow-hidden rounded-xl border border-slate-200 bg-white p-1 max-h-56 overflow-y-auto space-y-0.5 animate-in fade-in duration-150">
+        {query.length > 0 && isSearchFocused && (
+          <div className="absolute left-0 top-[calc(100%+6px)] z-50 w-full overflow-hidden rounded-xl border border-slate-200 bg-white p-1 max-h-56 overflow-y-auto space-y-0.5 shadow-md animate-in fade-in duration-150">
             {searchResults.length > 0 ? (
               searchResults.map((movie) => (
                 <Link
@@ -119,7 +123,6 @@ function Navbar({ username = 'User' }) {
                       className="w-full h-full object-cover"
                     />
                   </div>
-
                   <span className="font-semibold text-slate-900 truncate flex-1 min-w-0">{movie.movieName}</span>
                   <ChevronRight className="w-3.5 h-3.5 text-slate-400 shrink-0 ml-1" />
                 </Link>
@@ -133,45 +136,38 @@ function Navbar({ username = 'User' }) {
         )}
       </div>
 
-      <div className="flex items-center gap-1 sm:gap-2 shrink-0">
-        <NavLink
+      <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+        <Link
           to="/main-home"
-          className={({ isActive }) =>
-            `px-2 py-1 text-xs font-bold text-slate-950 transition-all cursor-pointer ${
-              isActive ? 'underline underline-offset-8 decoration-2' : ''
-            }`
-          }
+          className="px-2.5 py-1 text-xs font-bold text-slate-950 hover:text-slate-700 transition-colors cursor-pointer"
         >
           Home
-        </NavLink>
-
-        <NavLink
-          to="/my-bookings"
-          className={({ isActive }) =>
-            `px-2 py-1 text-xs font-bold text-slate-950 transition-all cursor-pointer ${
-              isActive ? 'underline underline-offset-8 decoration-2' : ''
-            }`
-          }
-        >
-          My Bookings
-        </NavLink>
+        </Link>
 
         <div className="relative" ref={dropdownRef}>
           <button
             type="button"
             onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white border border-slate-300 hover:border-slate-400 transition-all text-xs font-bold text-slate-950 cursor-pointer"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-slate-200 hover:border-slate-300 transition-colors text-xs font-bold text-slate-950 cursor-pointer"
           >
+            <User className="w-4 h-4 text-slate-700" />
             <span>Hi, {userName}</span>
-            <ChevronDown className={`w-3.5 h-3.5 text-slate-500 transition-transform duration-200 ${isDropdownOpen ? 'rotate-180' : ''}`} />
           </button>
 
           {isDropdownOpen && (
-            <div className="absolute right-0 mt-2 w-32 bg-white border border-slate-200 rounded-xl p-1 z-50 animate-in fade-in duration-150 text-left shadow-sm">
+            <div className="absolute right-0 mt-2 w-36 bg-white border border-slate-200 rounded-xl p-1 z-50 animate-in fade-in duration-150 text-left shadow-md">
+              <Link
+                to="/my-bookings"
+                onClick={() => setIsDropdownOpen(false)}
+                className="w-full block px-3 py-2 text-xs font-bold text-slate-800 hover:bg-slate-50 transition-colors rounded-lg cursor-pointer text-left"
+              >
+                My Bookings
+              </Link>
+              <div className="my-1 border-t border-slate-100" />
               <button
                 type="button"
                 onClick={handleLogout}
-                className="w-full px-3 py-2 text-xs font-bold text-red-600 hover:bg-red-50 transition-colors rounded-lg cursor-pointer text-left"
+                className="w-full block px-3 py-2 text-xs font-bold text-red-600 hover:bg-red-50 transition-colors rounded-lg cursor-pointer text-left"
               >
                 Logout
               </button>
