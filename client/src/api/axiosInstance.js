@@ -6,7 +6,6 @@ export const axiosInstance = axios.create({
   },
 });
 
-// attach x-access-token header to requests
 axiosInstance.interceptors.request.use((config) => {
   const token = localStorage.getItem('accessToken') || localStorage.getItem('token');
   if (token) {

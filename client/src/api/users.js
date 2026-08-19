@@ -1,6 +1,5 @@
 import { axiosInstance } from './axiosInstance';
 
-// register user api call
 export const RegisterUser = async (value) => {
     try {
         const response = await axiosInstance.post('/api/users/register', value);
@@ -10,7 +9,6 @@ export const RegisterUser = async (value) => {
     }
 };
 
-// login user api call
 export const LoginUser = async (value) => {
     try {
         const response = await axiosInstance.post('/api/users/login', value);
@@ -20,7 +18,6 @@ export const LoginUser = async (value) => {
     }
 };
 
-// get current logged in user details api call
 export const GetLoggedInUser = async () => {
     try {
         const response = await axiosInstance.get('/api/users/get-current-user');
@@ -30,7 +27,6 @@ export const GetLoggedInUser = async () => {
     }
 };
 
-// forget password user api call
 export const ForgetPasswordAPI = async (data) => {
     try {
         const response = await axiosInstance.post('/api/users/forget', data);
@@ -41,7 +37,6 @@ export const ForgetPasswordAPI = async (data) => {
     }
 };
 
-// reset password user api call
 export const ResetPasswordAPI = async (data) => {
     try {
         const response = await axiosInstance.post('/api/users/reset', data);

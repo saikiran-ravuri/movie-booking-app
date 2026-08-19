@@ -35,10 +35,10 @@ function SeatsDetails({ showDetails: propShowDetails }) {
 
   if (loading) {
     return (
-      <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 sm:pt-8 select-none">
-        <div className="relative overflow-hidden rounded-3xl bg-white border border-slate-200 py-12 px-8 flex flex-col items-center justify-center">
+      <div className="w-full max-w-7xl mx-auto px-[clamp(0.5rem,2vw,2rem)] pt-[clamp(0.75rem,2vw,2rem)] select-none">
+        <div className="relative overflow-hidden rounded-3xl bg-white border border-slate-200 py-12 px-8 flex flex-col items-center justify-center shadow-xs">
           <div className="inline-block animate-spin rounded-full h-8 w-8 border-4 border-slate-950 border-t-transparent mb-4" />
-          <p className="text-slate-600 font-semibold text-sm">Fetching Show Details...</p>
+          <p className="text-slate-600 font-semibold text-xs sm:text-sm">Fetching Show Details...</p>
         </div>
       </div>
     );
@@ -60,40 +60,40 @@ function SeatsDetails({ showDetails: propShowDetails }) {
     : (movie.genre || '').replaceAll(',', ' • ');
 
   return (
-    <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 sm:pt-8 pb-0 select-none">
-      <div className="relative overflow-hidden rounded-3xl bg-white border border-slate-200 py-6 sm:py-8 px-6 sm:px-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 sm:gap-8">
-        <div className="space-y-2 max-w-xl">
-          <p className="text-slate-950 font-extrabold text-base sm:text-lg tracking-tight">
+    <div className="w-full max-w-7xl mx-auto px-[clamp(0.5rem,2vw,2rem)] pt-[clamp(0.75rem,2vw,2rem)] pb-0 select-none">
+      <div className="relative overflow-hidden rounded-3xl bg-white border border-slate-200 py-[clamp(0.75rem,1.8vw,1.8rem)] px-[clamp(0.75rem,2.2vw,2.5rem)] flex flex-row items-center justify-between gap-[clamp(0.75rem,2vw,2rem)] shadow-xs">
+        <div className="space-y-[clamp(0.15rem,0.3vw,0.25rem)] text-left min-w-0 flex-1">
+          <p className="text-slate-950 font-extrabold text-[clamp(0.8rem,1.2vw,1.125rem)] tracking-tight truncate">
             {theatre.name || 'Cinema Venue'}
           </p>
           {theatre.address && (
-            <p className="flex items-center gap-1.5 text-slate-500 text-xs sm:text-sm font-medium">
-              <MapPin className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-              <span>{theatre.address}</span>
+            <p className="flex items-center gap-1.5 text-slate-500 text-[clamp(0.6rem,0.78vw,0.75rem)] font-medium truncate">
+              <MapPin className="w-[clamp(0.75rem,0.9vw,0.875rem)] h-[clamp(0.75rem,0.9vw,0.875rem)] text-slate-400 shrink-0" />
+              <span className="truncate">{theatre.address}</span>
             </p>
           )}
 
-          <div className="flex flex-wrap items-center gap-2.5 sm:gap-3 pt-1 select-none">
+          <div className="flex flex-wrap items-center gap-[clamp(0.25rem,0.5vw,0.75rem)] pt-1 select-none">
             {formattedDate && (
-              <span className="px-2.5 py-1 rounded-lg bg-white border border-slate-200 text-slate-600 text-[10px] sm:text-[11px] font-semibold flex items-center">
+              <span className="px-[clamp(0.35rem,0.5vw,0.625rem)] py-[clamp(0.15rem,0.25vw,0.25rem)] rounded-lg bg-white border border-slate-200 text-slate-600 text-[clamp(0.52rem,0.68vw,0.6875rem)] font-semibold flex items-center">
                 {formattedDate}
               </span>
             )}
 
             {showDetails.showTime && (
-              <span className="px-2.5 py-1 rounded-lg bg-white border border-slate-200 text-slate-600 text-[10px] sm:text-[11px] font-semibold flex items-center">
+              <span className="px-[clamp(0.35rem,0.5vw,0.625rem)] py-[clamp(0.15rem,0.25vw,0.25rem)] rounded-lg bg-white border border-slate-200 text-slate-600 text-[clamp(0.52rem,0.68vw,0.6875rem)] font-semibold flex items-center">
                 {showDetails.showTime}
               </span>
             )}
           </div>
         </div>
 
-        <div className="max-w-xl text-left md:text-right shrink-0 space-y-1.5 border-t md:border-t-0 pt-4 md:pt-0 border-slate-100">
-          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-slate-950 leading-[1.18]">
+        <div className="text-right shrink-0 space-y-[clamp(0.15rem,0.3vw,0.25rem)] min-w-0 max-w-[50%]">
+          <h1 className="text-[clamp(0.95rem,2.2vw,2.25rem)] font-extrabold tracking-tight text-slate-950 leading-[1.18] truncate">
             {movieTitle}
           </h1>
-          <p className="text-xs sm:text-sm font-medium text-slate-500 leading-relaxed">
-            {formattedGenre || 'Select your seats for an immersive cinema experience'}
+          <p className="text-[clamp(0.58rem,0.85vw,0.875rem)] font-medium text-slate-500 leading-relaxed truncate">
+            {formattedGenre || 'Select your seats'}
           </p>
         </div>
       </div>

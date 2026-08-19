@@ -1,5 +1,4 @@
 import React from 'react';
-import { Clapperboard, Film } from 'lucide-react';
 
 const GithubIcon = (props) => (
   <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" {...props}>
@@ -10,13 +9,10 @@ const GithubIcon = (props) => (
 
 function Footer() {
   return (
-    <footer className="w-full bg-white border-t border-slate-200 px-4 sm:px-6 lg:px-8 py-6 mt-12 sm:mt-20 select-none">
+    <footer className="w-full bg-white border-t border-slate-200 px-[clamp(0.5rem,2vw,2rem)] py-[clamp(0.75rem,1.5vw,1.5rem)] mt-[clamp(1.5rem,3vw,3rem)] select-none">
       <div className="max-w-7xl mx-auto flex items-center justify-end gap-2">
-
-
-
         <div className="flex items-center gap-2 shrink-0">
-          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-50 border border-slate-200 text-[11px] font-semibold text-slate-700">
+          <div className="flex items-center gap-1.5 px-[clamp(0.5rem,0.8vw,0.75rem)] py-[clamp(0.25rem,0.4vw,0.375rem)] rounded-full bg-slate-50 border border-slate-200 text-[clamp(0.65rem,0.75vw,0.72rem)] font-semibold text-slate-700">
             <span>Developed by <strong className="text-slate-950">SaiKiran Ravuri</strong></span>
           </div>
 
@@ -24,11 +20,11 @@ function Footer() {
             href="https://github.com/saikiran-ravuri"
             target="_blank"
             rel="noopener noreferrer"
-            className="p-1.5 rounded-full bg-slate-50 border border-slate-200 hover:bg-slate-950 hover:text-white text-slate-700 transition-all cursor-pointer shadow-2xs active:scale-95 flex items-center justify-center group"
+            className="p-[clamp(0.35rem,0.5vw,0.5rem)] rounded-full bg-slate-50 border border-slate-200 hover:bg-slate-950 hover:text-white text-slate-700 transition-all cursor-pointer shadow-2xs active:scale-95 flex items-center justify-center group"
             title="View GitHub Profile"
             aria-label="GitHub Profile"
           >
-            <GithubIcon className="w-4 h-4 group-hover:scale-110 transition-transform" />
+            <GithubIcon className="w-[clamp(0.85rem,1vw,1rem)] h-[clamp(0.85rem,1vw,1rem)] group-hover:scale-110 transition-transform" />
           </a>
         </div>
       </div>

@@ -12,39 +12,39 @@ function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-950 font-sans flex flex-col items-center justify-center p-6 text-center select-none">
-      <div className="space-y-5 max-w-lg flex flex-col items-center">
-        <div className="relative w-16 h-16 rounded-2xl bg-slate-950 border border-slate-800 flex items-center justify-center text-white shadow-md">
-          <Clapperboard className="w-8 h-8 text-white stroke-[1.75]" />
-          <Film className="w-4 h-4 text-white absolute bottom-2 right-2 opacity-80" />
+    <div className="min-h-screen bg-slate-50 text-slate-950 font-sans flex flex-col items-center justify-center p-[clamp(1rem,3vw,2rem)] text-center select-none">
+      <div className="space-y-[clamp(0.75rem,1.8vw,1.5rem)] max-w-lg flex flex-col items-center">
+        <div className="relative w-[clamp(3.5rem,5vw,4.5rem)] h-[clamp(3.5rem,5vw,4.5rem)] rounded-2xl bg-slate-950 border border-slate-800 flex items-center justify-center text-white shadow-md">
+          <Clapperboard className="w-[clamp(1.75rem,2.5vw,2.25rem)] h-[clamp(1.75rem,2.5vw,2.25rem)] text-white stroke-[1.75]" />
+          <Film className="w-[clamp(0.75rem,1vw,1rem)] h-[clamp(0.75rem,1vw,1rem)] text-white absolute bottom-2 right-2 opacity-80" />
         </div>
 
-        <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-950 leading-tight">
+        <h1 className="text-[clamp(1.5rem,3.5vw,2.5rem)] font-extrabold tracking-tight text-slate-950 leading-tight">
           Movie Booking Application
         </h1>
 
-        <p className="text-[11px] font-semibold uppercase tracking-widest text-slate-500 text-center">
+        <p className="text-[clamp(0.6rem,0.75vw,0.6875rem)] font-semibold uppercase tracking-widest text-slate-500 text-center">
           Full-Stack Web Application
         </p>
 
-        <p className="text-slate-600 text-sm leading-relaxed max-w-md">
+        <p className="text-slate-600 text-[clamp(0.75rem,1vw,0.875rem)] leading-relaxed max-w-md">
           A complete movie ticketing platform featuring secure JWT authentication, OTP verification, dynamic showtime management, and real-time seat selection.
         </p>
 
-        <p className="text-xs font-semibold text-slate-500 pt-1">
+        <p className="text-[clamp(0.68rem,0.85vw,0.75rem)] font-semibold text-slate-500 pt-0.5">
           Please login to continue
         </p>
 
-        <div className="pt-3 flex flex-wrap items-center justify-center gap-3">
+        <div className="pt-2 flex flex-wrap items-center justify-center gap-3">
           <button
             onClick={() => openAuth('login')}
-            className="px-5 py-2 rounded-lg bg-white border border-slate-300 hover:bg-slate-50 text-slate-950 text-sm font-medium transition-colors cursor-pointer"
+            className="px-6 py-2.5 rounded-xl bg-white border border-slate-300 hover:border-slate-600 hover:bg-slate-50 text-slate-950 text-[clamp(0.75rem,0.9vw,0.875rem)] font-bold transition-colors cursor-pointer shadow-xs"
           >
             Login
           </button>
           <button
             onClick={() => openAuth('signup')}
-            className="px-5 py-2 rounded-lg bg-slate-100 hover:bg-slate-200/80 border border-slate-200/80 text-slate-700 text-sm font-medium transition-colors cursor-pointer"
+            className="px-6 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200/80 border border-slate-200 text-slate-700 text-[clamp(0.75rem,0.9vw,0.875rem)] font-bold transition-colors cursor-pointer shadow-xs"
           >
             Sign Up
           </button>

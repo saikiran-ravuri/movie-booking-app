@@ -7,9 +7,10 @@ function MyBookings() {
     <div className="min-h-screen bg-slate-50 text-slate-950 font-sans flex flex-col justify-between select-none">
       <Navbar />
 
-      <main className="flex-1 w-full flex flex-col items-center justify-center py-12 px-4 text-center space-y-1">
-        <h3 className="text-lg sm:text-xl font-extrabold text-slate-950">No Bookings Found</h3>
-        <p className="text-xs sm:text-sm text-slate-500 font-medium">You don't have any upcoming bookings yet.</p>
+      <main className="flex-1 w-full max-w-7xl mx-auto px-[clamp(0.5rem,2vw,2rem)] py-[clamp(2rem,6vw,6rem)] flex items-center justify-center">
+        <p className="text-sm font-semibold text-slate-600">
+          This page is not built right now.
+        </p>
       </main>
 
       <Footer />

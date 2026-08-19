@@ -33,7 +33,7 @@ function Shows() {
   };
 
   return (
-    <section id="shows-section" className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 sm:pt-8 pb-12 select-none">
+    <section id="shows-section" className="w-full max-w-7xl mx-auto px-[clamp(0.5rem,2vw,2rem)] pt-[clamp(0.75rem,1.8vw,2rem)] pb-[clamp(1.5rem,3vw,3rem)] select-none">
       <Showheader date={date} onDateSelect={handleDateSelect} />
       <Showlist shows={shows} date={date} loading={loading} />
     </section>

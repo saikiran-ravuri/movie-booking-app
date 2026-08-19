@@ -1,6 +1,5 @@
 import { axiosInstance } from './axiosInstance';
 
-// fetch all movies api call
 export const FetchAllMovies = async () => {
     try {
         const response = await axiosInstance.get('/api/movies');
@@ -11,7 +10,6 @@ export const FetchAllMovies = async () => {
     }
 };
 
-// fetch movie by id api call
 export const FetchMovieById = async (movieId) => {
     try {
         const response = await axiosInstance.get(`/api/movies/${movieId}`);
@@ -22,7 +20,6 @@ export const FetchMovieById = async (movieId) => {
     }
 };
 
-// create movie api call (admin only)
 export const CreateMovie = async (movieData) => {
     try {
         const response = await axiosInstance.post('/api/movies', movieData);

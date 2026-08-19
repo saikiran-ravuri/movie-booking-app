@@ -22,12 +22,11 @@ function Hero() {
     getMovies();
   }, []);
 
-  // auto-rotate poster carousel every 4s unless hovered
   useEffect(() => {
     if (movies.length === 0 || isHovered) return;
     const interval = setInterval(() => {
       setStartIndex((prev) => (prev + 1) % movies.length);
-    }, 4000);
+    }, 2000);
     return () => clearInterval(interval);
   }, [movies.length, isHovered]);
 
@@ -57,57 +56,57 @@ function Hero() {
     : [];
 
   return (
-    <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 sm:pt-12 pb-0 select-none">
-      <div 
+    <div className="w-full max-w-7xl mx-auto px-[clamp(0.5rem,2vw,2rem)] pt-[clamp(0.75rem,2vw,2.5rem)] pb-0 select-none">
+      <div
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
-        className="relative overflow-hidden rounded-3xl bg-white border border-slate-200 py-8 sm:py-10 px-8 sm:px-12 flex flex-col md:flex-row items-center justify-between gap-8 min-h-[280px] sm:min-h-[320px] md:min-h-[350px] group"
+        className="relative overflow-hidden rounded-3xl bg-white border border-slate-200 py-[clamp(0.875rem,2vw,2.5rem)] px-[clamp(0.75rem,2.5vw,3rem)] flex flex-row items-center justify-between gap-[clamp(0.5rem,1.8vw,2rem)] min-h-[clamp(170px,22vw,350px)] group"
       >
-        <div className="relative z-10 w-full md:max-w-xl text-left space-y-3.5">
-          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-slate-950 leading-[1.18]">
+        <div className="relative z-10 flex-1 min-w-0 text-left space-y-[clamp(0.35rem,0.8vw,0.875rem)]">
+          <h1 className="text-[clamp(0.95rem,2.2vw,2.25rem)] font-extrabold tracking-tight text-slate-950 leading-[1.18]">
             Book Your Movie Tickets Instantly
           </h1>
 
-          <p className="text-xs sm:text-sm font-medium text-slate-500 leading-relaxed max-w-lg">
+          <p className="text-[clamp(0.58rem,0.85vw,0.875rem)] font-medium text-slate-500 leading-relaxed max-w-lg">
             Discover trending releases, check live showtimes, and book your preferred seats with our seamless booking platform.
           </p>
 
-          <div className="pt-2 flex flex-wrap items-center gap-2.5 sm:gap-3 select-none">
-            <span className="px-2.5 py-1 rounded-lg bg-white border border-slate-200 text-slate-500 text-[10px] sm:text-[11px] font-medium flex items-center">
+          <div className="pt-[clamp(0.2rem,0.4vw,0.5rem)] flex flex-wrap items-center gap-[clamp(0.25rem,0.6vw,0.75rem)] select-none">
+            <span className="px-[clamp(0.35rem,0.5vw,0.625rem)] py-[clamp(0.15rem,0.25vw,0.25rem)] rounded-lg bg-white border border-slate-200 text-slate-500 text-[clamp(0.52rem,0.65vw,0.6875rem)] font-medium flex items-center">
               Instant
             </span>
-            <span className="px-2.5 py-1 rounded-lg bg-white border border-slate-200 text-slate-500 text-[10px] sm:text-[11px] font-medium flex items-center">
+            <span className="px-[clamp(0.35rem,0.5vw,0.625rem)] py-[clamp(0.15rem,0.25vw,0.25rem)] rounded-lg bg-white border border-slate-200 text-slate-500 text-[clamp(0.52rem,0.65vw,0.6875rem)] font-medium flex items-center">
               100% Secure
             </span>
             <button
               type="button"
               onClick={scrollToMovies}
-              className="h-9 px-5 rounded-xl bg-white border border-slate-300 hover:border-slate-600 text-slate-950 text-xs sm:text-sm font-bold flex items-center gap-2 transition-colors cursor-pointer hover:bg-slate-50 group/btn"
+              className="h-[clamp(1.6rem,2vw,2.25rem)] px-[clamp(0.5rem,1vw,1.25rem)] rounded-xl bg-white border border-slate-300 hover:border-slate-600 text-slate-950 text-[clamp(0.6rem,0.75vw,0.875rem)] font-bold flex items-center gap-[clamp(0.2rem,0.35vw,0.5rem)] transition-colors cursor-pointer hover:bg-slate-50 group/btn shrink-0 shadow-xs"
             >
               <span>Explore Movies</span>
-              <ArrowRight className="w-3.5 h-3.5 text-slate-600 group-hover/btn:translate-x-0.5 transition-transform" />
+              <ArrowRight className="w-[clamp(0.7rem,0.9vw,0.875rem)] h-[clamp(0.7rem,0.9vw,0.875rem)] text-slate-600 group-hover/btn:translate-x-0.5 transition-transform" />
             </button>
           </div>
         </div>
 
         {visibleMovies.length > 0 && (
-          <div className="flex items-center justify-center md:justify-end gap-2.5 sm:gap-4 relative z-10 w-full md:w-auto shrink-0">
+          <div className="flex items-center justify-end gap-[clamp(0.2rem,0.5vw,0.875rem)] relative z-10 shrink-0">
             <button
               type="button"
               onClick={handlePrev}
-              className="p-1.5 sm:p-2 rounded-full bg-white border border-slate-200 text-slate-600 hover:text-slate-950 hover:bg-slate-50 transition-colors opacity-0 group-hover:opacity-100 cursor-pointer"
+              className="w-[clamp(1.4rem,1.8vw,2rem)] h-[clamp(1.4rem,1.8vw,2rem)] rounded-full bg-white border border-slate-200 text-slate-600 hover:text-slate-950 hover:bg-slate-50 transition-colors flex items-center justify-center cursor-pointer shadow-xs"
               title="Previous"
               aria-label="Previous movie"
             >
-              <ChevronLeft className="w-4 h-4" />
+              <ChevronLeft className="w-[clamp(0.75rem,1vw,1rem)] h-[clamp(0.75rem,1vw,1rem)]" />
             </button>
 
-            <div className="flex items-center justify-center gap-3 sm:gap-4">
+            <div className="flex items-center justify-center gap-[clamp(0.25rem,0.6vw,0.875rem)]">
               {visibleMovies.map((movie, index) => (
                 <Link
                   key={`${movie._id}-${index}`}
                   to={`/movies/${movie._id}?date=${todayDate}`}
-                  className="w-24 sm:w-32 md:w-36 aspect-[2/3] rounded-2xl overflow-hidden border border-slate-200 hover:border-slate-600 bg-white transition-colors duration-200 cursor-pointer shrink-0"
+                  className="w-[clamp(44px,7.5vw,144px)] aspect-[2/3] rounded-[clamp(0.5rem,0.9vw,1rem)] overflow-hidden border border-slate-200 hover:border-slate-600 bg-white transition-colors duration-200 cursor-pointer shrink-0 shadow-2xs"
                   title={movie.movieName}
                 >
                   <img
@@ -126,11 +125,11 @@ function Hero() {
             <button
               type="button"
               onClick={handleNext}
-              className="p-1.5 sm:p-2 rounded-full bg-white border border-slate-200 text-slate-600 hover:text-slate-950 hover:bg-slate-50 transition-all opacity-0 group-hover:opacity-100 cursor-pointer"
+              className="w-[clamp(1.4rem,1.8vw,2rem)] h-[clamp(1.4rem,1.8vw,2rem)] rounded-full bg-white border border-slate-200 text-slate-600 hover:text-slate-950 hover:bg-slate-50 transition-colors flex items-center justify-center cursor-pointer shadow-xs"
               title="Next"
               aria-label="Next movie"
             >
-              <ChevronRight className="w-4 h-4" />
+              <ChevronRight className="w-[clamp(0.75rem,1vw,1rem)] h-[clamp(0.75rem,1vw,1rem)]" />
             </button>
           </div>
         )}

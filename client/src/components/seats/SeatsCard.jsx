@@ -72,22 +72,22 @@ function SeatsCard({ showDetails: propShowDetails }) {
   };
 
   return (
-    <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 select-none space-y-6">
-      <div className="relative overflow-hidden rounded-3xl bg-white border border-slate-200 py-6 sm:py-8 px-6 sm:px-10 space-y-6">
-        <div className="border-b border-slate-100 pb-3 text-center">
-          <p className="text-xs font-extrabold text-slate-500 uppercase tracking-widest">
+    <div className="w-full max-w-7xl mx-auto px-[clamp(0.5rem,2vw,2rem)] py-[clamp(0.75rem,1.8vw,1.5rem)] select-none space-y-[clamp(0.75rem,1.5vw,1.5rem)]">
+      <div className="relative overflow-hidden rounded-3xl bg-white border border-slate-200 py-[clamp(0.75rem,1.8vw,1.8rem)] px-[clamp(0.5rem,2vw,2.5rem)] space-y-[clamp(0.75rem,1.5vw,1.5rem)] shadow-xs">
+        <div className="border-b border-slate-100 pb-2.5 text-center">
+          <p className="text-[clamp(0.62rem,0.8vw,0.75rem)] font-extrabold text-slate-500 uppercase tracking-widest">
             STANDARD — ₹{ticketPrice}
           </p>
         </div>
 
-        <div className="overflow-x-auto pb-2 no-scrollbar max-w-full flex justify-center pt-2">
-          <div className="space-y-2.5 min-w-[580px]">
+        <div className="overflow-x-auto pb-2 no-scrollbar max-w-full flex justify-center pt-1">
+          <div className="space-y-[clamp(0.25rem,0.5vw,0.625rem)] min-w-max px-2">
             {Array.from({ length: rows }).map((_, rowIndex) => {
               const rowLetter = String.fromCharCode(65 + rowIndex);
 
               return (
                 <div key={rowIndex} className="flex items-center justify-center">
-                  <div className="flex items-center gap-1 sm:gap-1.5">
+                  <div className="flex items-center gap-[clamp(2px,0.4vw,6px)]">
                     {Array.from({ length: columns }).map((_, colIndex) => {
                       const seatNumber = rowIndex * columns + colIndex + 1;
                       if (seatNumber > totalSeats) return null;
@@ -102,7 +102,7 @@ function SeatsCard({ showDetails: propShowDetails }) {
                         <React.Fragment key={seatNumber}>
                           <div className="relative flex items-center justify-center">
                             {isErrorOnThisSeat && (
-                              <div className="absolute -top-7 left-1/2 -translate-x-1/2 z-30 bg-slate-900 text-white text-[10px] font-bold px-2 py-0.5 rounded whitespace-nowrap pointer-events-none">
+                              <div className="absolute -top-7 left-1/2 -translate-x-1/2 z-30 bg-slate-900 text-white text-[9px] font-bold px-2 py-0.5 rounded whitespace-nowrap pointer-events-none">
                                 Max 6 seats
                               </div>
                             )}
@@ -111,11 +111,11 @@ function SeatsCard({ showDetails: propShowDetails }) {
                               type="button"
                               disabled={isBooked}
                               onClick={() => handleSeatSelect(seatNumber)}
-                              className={`w-6 h-6 sm:w-7 sm:h-7 rounded-md sm:rounded-lg text-[8px] sm:text-[10px] font-bold transition-all flex items-center justify-center cursor-pointer ${isBooked
+                              className={`w-[clamp(15px,2.1vw,28px)] h-[clamp(15px,2.1vw,28px)] rounded-[clamp(4px,0.5vw,8px)] text-[clamp(6px,0.7vw,10px)] font-bold transition-all flex items-center justify-center cursor-pointer ${isBooked
                                 ? 'bg-slate-200 text-slate-400 border border-slate-300 cursor-not-allowed'
                                 : isSelected
-                                  ? 'bg-slate-950 text-white border border-slate-950 scale-105'
-                                  : 'bg-white text-slate-700 border border-slate-200 hover:border-slate-400 hover:bg-slate-50'
+                                  ? 'bg-slate-950 text-white border border-slate-950 scale-105 shadow-2xs'
+                                  : 'bg-white text-slate-700 border border-slate-200 hover:border-slate-400 hover:bg-slate-50 shadow-2xs'
                                 }`}
                             >
                               {seatLabel}
@@ -123,7 +123,7 @@ function SeatsCard({ showDetails: propShowDetails }) {
                           </div>
 
                           {isCenterAisle && (
-                            <div className="w-3 sm:w-6 h-full pointer-events-none" />
+                            <div className="w-[clamp(6px,1.2vw,24px)] h-full pointer-events-none" />
                           )}
                         </React.Fragment>
                       );
@@ -135,26 +135,26 @@ function SeatsCard({ showDetails: propShowDetails }) {
           </div>
         </div>
 
-        <div className="w-full flex flex-col items-center justify-center space-y-1.5 pt-3 pb-1">
-          <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">
+        <div className="w-full flex flex-col items-center justify-center space-y-1 pt-2 pb-1">
+          <p className="text-[clamp(0.55rem,0.7vw,0.625rem)] font-extrabold text-slate-400 uppercase tracking-widest">
             SCREEN
           </p>
-          <div className="w-full max-w-sm h-1 bg-slate-900 rounded-full" />
+          <div className="w-full max-w-[clamp(160px,28vw,380px)] h-[clamp(3px,0.4vw,4px)] bg-slate-900 rounded-full" />
         </div>
 
-        <div className="flex items-center justify-center gap-6 sm:gap-10 text-xs font-semibold text-slate-600 border-t border-slate-100 pt-6">
-          <div className="flex items-center gap-2">
-            <span className="w-3.5 h-3.5 rounded-md border border-slate-300 bg-white" />
+        <div className="flex items-center justify-center gap-[clamp(1rem,2.5vw,2.5rem)] text-[clamp(0.62rem,0.8vw,0.75rem)] font-semibold text-slate-600 border-t border-slate-100 pt-[clamp(0.75rem,1.5vw,1.5rem)]">
+          <div className="flex items-center gap-[clamp(0.25rem,0.4vw,0.5rem)]">
+            <span className="w-[clamp(0.75rem,0.9vw,0.875rem)] h-[clamp(0.75rem,0.9vw,0.875rem)] rounded-md border border-slate-300 bg-white shadow-2xs" />
             <span>Available</span>
           </div>
 
-          <div className="flex items-center gap-2">
-            <span className="w-3.5 h-3.5 rounded-md bg-slate-950 border border-slate-950" />
+          <div className="flex items-center gap-[clamp(0.25rem,0.4vw,0.5rem)]">
+            <span className="w-[clamp(0.75rem,0.9vw,0.875rem)] h-[clamp(0.75rem,0.9vw,0.875rem)] rounded-md bg-slate-950 border border-slate-950 shadow-2xs" />
             <span>Selected</span>
           </div>
 
-          <div className="flex items-center gap-2">
-            <span className="w-3.5 h-3.5 rounded-md bg-slate-200 border border-slate-300" />
+          <div className="flex items-center gap-[clamp(0.25rem,0.4vw,0.5rem)]">
+            <span className="w-[clamp(0.75rem,0.9vw,0.875rem)] h-[clamp(0.75rem,0.9vw,0.875rem)] rounded-md bg-slate-200 border border-slate-300" />
             <span>Sold</span>
           </div>
         </div>

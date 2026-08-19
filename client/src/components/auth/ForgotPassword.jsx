@@ -45,8 +45,8 @@ function ForgotPassword({ isModal = false, onCloseModal, onSwitchToLogin, onSwit
   };
 
   const formContent = (
-    <div className="w-full space-y-5 text-left">
-      <h1 className="text-xl sm:text-2xl font-extrabold tracking-tight text-slate-950 text-center">
+    <div className="w-full space-y-[clamp(0.75rem,1.5vw,1.25rem)] text-left">
+      <h1 className="text-[clamp(1.1rem,1.8vw,1.5rem)] font-extrabold tracking-tight text-slate-950 text-center">
         Forgot Password
       </h1>
 
@@ -64,9 +64,9 @@ function ForgotPassword({ isModal = false, onCloseModal, onSwitchToLogin, onSwit
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-[clamp(0.6rem,1.2vw,1rem)]">
         <div>
-          <label className="block text-xs font-semibold text-slate-700 mb-1.5 text-left">
+          <label className="block text-[clamp(0.65rem,0.8vw,0.75rem)] font-semibold text-slate-700 mb-1.5 text-left">
             Email Address
           </label>
           <input
@@ -78,7 +78,7 @@ function ForgotPassword({ isModal = false, onCloseModal, onSwitchToLogin, onSwit
             }}
             placeholder="Enter Email"
             disabled={loading}
-            className="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-sm font-medium text-slate-950 placeholder-slate-400 focus:outline-none focus:border-slate-950 transition-colors text-left"
+            className="w-full px-3.5 py-[clamp(0.45rem,0.8vw,0.625rem)] bg-white border border-slate-200 rounded-xl text-[clamp(0.75rem,0.9vw,0.875rem)] font-medium text-slate-950 placeholder-slate-400 focus:outline-none focus:border-slate-950 transition-colors text-left"
           />
         </div>
 
@@ -86,7 +86,7 @@ function ForgotPassword({ isModal = false, onCloseModal, onSwitchToLogin, onSwit
           <button
             type="submit"
             disabled={loading}
-            className="w-full h-11 px-5 rounded-xl bg-white border border-slate-300 hover:border-slate-600 text-slate-950 text-xs sm:text-sm font-bold flex items-center justify-center gap-2 transition-colors cursor-pointer hover:bg-slate-50 disabled:opacity-60 group/btn"
+            className="w-full h-[clamp(2.25rem,2.75vw,2.75rem)] px-5 rounded-xl bg-white border border-slate-300 hover:border-slate-600 text-slate-950 text-[clamp(0.68rem,0.85vw,0.875rem)] font-bold flex items-center justify-center gap-2 transition-colors cursor-pointer hover:bg-slate-50 disabled:opacity-60 group/btn shadow-xs"
           >
             <span>{loading ? 'Sending OTP...' : 'Send OTP'}</span>
             <ArrowRight className="w-4 h-4 text-slate-600 group-hover/btn:translate-x-0.5 transition-transform" />
@@ -94,7 +94,7 @@ function ForgotPassword({ isModal = false, onCloseModal, onSwitchToLogin, onSwit
         </div>
       </form>
 
-      <div className="text-center text-xs font-medium text-slate-600 pt-1">
+      <div className="text-center text-[clamp(0.65rem,0.8vw,0.75rem)] font-medium text-slate-600 pt-1">
         Remembered your password?{' '}
         <button
           type="button"
@@ -111,7 +111,7 @@ function ForgotPassword({ isModal = false, onCloseModal, onSwitchToLogin, onSwit
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-950 font-sans flex items-center justify-center p-6 select-none">
-      <div className="relative overflow-hidden w-full max-w-md bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 shadow-2xl text-left">
+      <div className="relative overflow-hidden w-full max-w-[clamp(280px,90vw,440px)] bg-white border border-slate-200 rounded-3xl p-[clamp(1.25rem,2.5vw,2rem)] shadow-2xl text-left">
         {formContent}
       </div>
     </div>

@@ -75,27 +75,27 @@ function Navbar({ username = 'User' }) {
     : [];
 
   return (
-    <header className="w-full bg-white border-b border-slate-200 px-4 sm:px-6 py-3 flex items-center justify-between select-none">
-      <Link to="/main-home" className="flex items-center gap-3 hover:opacity-90 transition-opacity shrink-0">
-        <div className="relative w-9 h-9 rounded-xl bg-slate-950 flex items-center justify-center text-white shadow-sm shrink-0">
-          <Clapperboard className="w-5 h-5 text-white stroke-[1.75]" />
-          <Film className="w-2.5 h-2.5 text-white absolute bottom-1 right-1 opacity-80" />
+    <header className="w-full bg-white border-b border-slate-200 px-[clamp(0.5rem,2vw,1.5rem)] py-[clamp(0.45rem,0.9vw,0.75rem)] flex items-center justify-between select-none">
+      <Link to="/main-home" className="flex items-center gap-[clamp(0.35rem,0.8vw,0.75rem)] hover:opacity-90 transition-opacity shrink-0">
+        <div className="relative w-[clamp(1.75rem,2.2vw,2.25rem)] h-[clamp(1.75rem,2.2vw,2.25rem)] rounded-xl bg-slate-950 flex items-center justify-center text-white shadow-xs shrink-0">
+          <Clapperboard className="w-[clamp(0.9rem,1.2vw,1.25rem)] h-[clamp(0.9rem,1.2vw,1.25rem)] text-white stroke-[1.75]" />
+          <Film className="w-[clamp(0.45rem,0.6vw,0.625rem)] h-[clamp(0.45rem,0.6vw,0.625rem)] text-white absolute bottom-1 right-1 opacity-80" />
         </div>
-        <span className="text-base font-bold tracking-tight text-slate-950">
+        <span className="text-[clamp(0.72rem,1.1vw,1rem)] font-bold tracking-tight text-slate-950 truncate max-w-[clamp(90px,18vw,260px)]">
           Movie Booking Application
         </span>
       </Link>
 
-      <div className="flex-1 max-w-sm mx-4 sm:mx-6 relative" ref={searchRef}>
+      <div className="flex-1 max-w-[clamp(120px,26vw,380px)] mx-[clamp(0.35rem,1.5vw,1.5rem)] relative" ref={searchRef}>
         <div className="relative w-full">
-          <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+          <Search className="w-[clamp(0.75rem,1vw,1rem)] h-[clamp(0.75rem,1vw,1rem)] text-slate-400 absolute left-[clamp(0.6rem,0.9vw,0.875rem)] top-1/2 -translate-y-1/2" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             onFocus={() => setIsSearchFocused(true)}
             placeholder="Search movies..."
-            className="w-full bg-slate-50 border border-slate-200 text-slate-900 text-xs font-medium rounded-full pl-9 pr-4 py-2 focus:outline-none focus:bg-white focus:border-slate-950 transition-all placeholder:text-slate-400"
+            className="w-full bg-slate-50 border border-slate-200 text-slate-900 text-[clamp(0.65rem,0.8vw,0.75rem)] font-medium rounded-full pl-[clamp(1.75rem,2.2vw,2.25rem)] pr-[clamp(0.5rem,1vw,1rem)] py-[clamp(0.3rem,0.55vw,0.5rem)] focus:outline-none focus:bg-white focus:border-slate-950 transition-all placeholder:text-slate-400"
           />
         </div>
 
@@ -123,12 +123,12 @@ function Navbar({ username = 'User' }) {
                       className="w-full h-full object-cover"
                     />
                   </div>
-                  <span className="font-semibold text-slate-900 truncate flex-1 min-w-0">{movie.movieName}</span>
+                  <span className="font-semibold text-slate-900 truncate flex-1 min-w-0 text-[clamp(0.68rem,0.8vw,0.75rem)]">{movie.movieName}</span>
                   <ChevronRight className="w-3.5 h-3.5 text-slate-400 shrink-0 ml-1" />
                 </Link>
               ))
             ) : (
-              <div className="px-3 py-3 text-center text-xs font-medium text-slate-400">
+              <div className="px-3 py-3 text-center text-[clamp(0.65rem,0.75vw,0.75rem)] font-medium text-slate-400">
                 No movies found
               </div>
             )}
@@ -136,10 +136,10 @@ function Navbar({ username = 'User' }) {
         )}
       </div>
 
-      <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+      <div className="flex items-center gap-[clamp(0.35rem,0.7vw,0.75rem)] shrink-0">
         <Link
           to="/main-home"
-          className="px-3 py-1.5 rounded-xl bg-white border border-slate-300 hover:border-slate-600 hover:bg-slate-50 text-slate-950 text-xs font-bold transition-colors cursor-pointer"
+          className="px-[clamp(0.45rem,0.8vw,0.75rem)] py-[clamp(0.25rem,0.5vw,0.375rem)] rounded-xl bg-white border border-slate-300 hover:border-slate-600 hover:bg-slate-50 text-slate-950 text-[clamp(0.65rem,0.78vw,0.75rem)] font-bold transition-colors cursor-pointer"
         >
           Home
         </Link>
@@ -148,10 +148,10 @@ function Navbar({ username = 'User' }) {
           <button
             type="button"
             onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white border border-slate-300 hover:border-slate-600 hover:bg-slate-50 text-slate-950 text-xs font-bold transition-colors cursor-pointer"
+            className="flex items-center gap-[clamp(0.2rem,0.35vw,0.375rem)] px-[clamp(0.45rem,0.8vw,0.75rem)] py-[clamp(0.25rem,0.5vw,0.375rem)] rounded-xl bg-white border border-slate-300 hover:border-slate-600 hover:bg-slate-50 text-slate-950 text-[clamp(0.65rem,0.78vw,0.75rem)] font-bold transition-colors cursor-pointer"
           >
-            <User className="w-3.5 h-3.5 text-slate-700" />
-            <span>Hi, {userName}</span>
+            <User className="w-[clamp(0.7rem,0.9vw,0.875rem)] h-[clamp(0.7rem,0.9vw,0.875rem)] text-slate-700" />
+            <span className="truncate max-w-[clamp(50px,8vw,100px)]">Hi, {userName}</span>
           </button>
 
           {isDropdownOpen && (
@@ -173,11 +173,6 @@ function Navbar({ username = 'User' }) {
               </button>
             </div>
           )}
-
-
-
-
-
         </div>
       </div>
     </header>

@@ -22,23 +22,23 @@ function MovieList() {
   const todayDate = new Date().toISOString().split("T")[0];
 
   return (
-    <section id="recommended-movies" className="pt-8 sm:pt-12 pb-0 bg-slate-50 select-none">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="mb-6">
-          <h2 className="text-xl sm:text-2xl font-extrabold text-slate-950 tracking-tight">Recommended Movies</h2>
-          <p className="text-xs sm:text-sm text-slate-500 mt-1 font-medium">Explore latest releases, re-releases, and book your tickets</p>
+    <section id="recommended-movies" className="pt-[clamp(1rem,2.2vw,2.5rem)] pb-0 bg-slate-50 select-none">
+      <div className="max-w-7xl mx-auto px-[clamp(0.5rem,2vw,2rem)]">
+        <div className="mb-[clamp(0.75rem,1.5vw,1.5rem)] text-left">
+          <h2 className="text-[clamp(1rem,1.8vw,1.5rem)] font-extrabold text-slate-950 tracking-tight">Recommended Movies</h2>
+          <p className="text-[clamp(0.6rem,0.85vw,0.875rem)] text-slate-500 mt-0.5 font-medium">Explore latest releases, re-releases, and book your tickets</p>
         </div>
 
         {movies === null && (
-          <div className="text-center my-16 py-10">
+          <div className="text-center my-12 py-8">
             <div className="inline-block animate-spin rounded-full h-8 w-8 border-3 border-slate-950 border-t-transparent mb-3"></div>
-            <p className="text-sm font-medium text-slate-600">Loading recommended movies...</p>
+            <p className="text-xs font-medium text-slate-600">Loading recommended movies...</p>
           </div>
         )}
 
         {movies && movies.length === 0 && (
-          <div className="text-center py-16 bg-white rounded-2xl border border-slate-200/90 shadow-xs">
-            <p className="text-slate-700 text-base font-bold">No movies currently available</p>
+          <div className="text-center py-12 bg-white rounded-2xl border border-slate-200 shadow-xs">
+            <p className="text-slate-700 text-sm font-bold">No movies currently available</p>
             <p className="text-slate-400 text-xs mt-1 font-medium">Check back soon for new movie releases.</p>
           </div>
         )}
@@ -46,7 +46,7 @@ function MovieList() {
         {movies && movies.length > 0 && (
           <div
             ref={scrollContainerRef}
-            className="flex overflow-x-auto gap-5 pb-2.5 pt-1 scroll-smooth [&::-webkit-scrollbar]:h-1 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-slate-200 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-slate-300"
+            className="flex overflow-x-auto gap-[clamp(0.5rem,1.2vw,1.25rem)] pb-2.5 pt-1 scroll-smooth"
           >
             {movies.map((movie, index) => (
               <MovieCards key={movie._id} movie={movie} todayDate={todayDate} isPromoted={index === 0} />
