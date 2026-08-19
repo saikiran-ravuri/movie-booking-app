@@ -6,48 +6,33 @@ const { sendEmail } = require("../utils/EmailUtils");
 const { bookingConfirmationTemplate } = require("../Templates/bookingConfirmation");
 require('dotenv').config();
 
-const stripeSecretKey = process.env.STRIPE_SECRET_KEY || process.env.stripe_key;
+const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
+
 const stripe = stripeSecretKey ? require('stripe')(stripeSecretKey) : null;
 
 // make payment
 const makePayment = async (req, res) => {
-    const { token, amount } = req.body;
-
-    console.log(token, amount);
-
     try {
-        if (!stripe) {
-            const mockTransactionId = `txn_${Date.now()}_${Math.floor(Math.random() * 1000)}`;
-            return res.status(200).send({
-                success: true,
-                message: "Payment successful",
-                transactionId: mockTransactionId
-            });
-        }
+        const { token, amount } = req.body;
 
-        const customer = await stripe.customers.create({
-            email: req.userDetails.email,
-            source: token
+        const charge = await stripe.charges.create({
+            amount,
+            currency: 'inr',
+            source: token,
+            receipt_email: req.userDetails.email
         });
-
-        const paymentIntent = await stripe.paymentIntents.create({
-            customer: customer.id,
-            amount: amount,
-            currency: 'usd',
-            payment_method_types: ['card']
-        });
-
-        console.log(paymentIntent);
 
         return res.status(200).send({
             success: true,
             message: "Payment successful",
-            transactionId: paymentIntent.id
+            transactionId: charge.id
         });
     } catch (err) {
-        return res.status(500).send({ success: false, message: "Internal Server Error", err });
+        return res.status(500).send({ success: false, message: err.message });
     }
 };
+
+
 
 // create booking
 const createBooking = async (req, res) => {

@@ -11,16 +11,9 @@ const GithubIcon = (props) => (
 function Footer() {
   return (
     <footer className="w-full bg-white border-t border-slate-200 px-4 sm:px-6 lg:px-8 py-6 mt-12 sm:mt-20 select-none">
-      <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-        <div className="flex items-center gap-2.5">
-          <div className="relative w-8 h-8 rounded-xl bg-slate-950 flex items-center justify-center text-white shadow-xs shrink-0">
-            <Clapperboard className="w-4 h-4 text-white stroke-[1.75]" />
-            <Film className="w-2 h-2 text-white absolute bottom-1 right-1 opacity-80" />
-          </div>
-          <span className="text-sm font-extrabold tracking-tight text-slate-950">
-            Movie Booking Application
-          </span>
-        </div>
+      <div className="max-w-7xl mx-auto flex items-center justify-end gap-2">
+
+
 
         <div className="flex items-center gap-2 shrink-0">
           <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-50 border border-slate-200 text-[11px] font-semibold text-slate-700">

@@ -80,9 +80,7 @@ function BookingInfo() {
     }
   };
 
-  const stripeKey = (typeof process !== 'undefined' && process.env && process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY)
-    ? process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY
-    : (import.meta.env?.VITE_STRIPE_PUBLISHABLE_KEY || 'pk_test_51U5IIOP4CdTODxXhkTAL1UuG4TaF13mRILXYjzDCp2dKH9dE63iAmQbinoSXM50BfyJGa665uhdFtRRIfq1z4B8300I62rgUnc');
+  const stripeKey = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY;
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-950 flex flex-col justify-between select-none">

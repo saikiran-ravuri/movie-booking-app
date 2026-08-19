@@ -9,7 +9,8 @@ const verifyToken = (req, res, next) => {
         return res.status(400).send({ success: false, message: "JWT token is not passed" });
     }
 
-    const secretKey = process.env.jwt_secret || process.env.SECRET_KEY;
+    const secretKey = process.env.JWT_SECRET;
+
     jwt.verify(token, secretKey, async (err, payload) => {
         if (err) {
             return res.status(403).send({ success: false, message: "You are not authenticated to access this route" });

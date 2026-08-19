@@ -102,9 +102,7 @@ function SeatsPrice({ selectedSeats, ticketPrice, showId, showDetails, getSeatLa
     }
   };
 
-  const stripeKey = (typeof process !== 'undefined' && process.env && process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY)
-    ? process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY
-    : (import.meta.env?.VITE_STRIPE_PUBLISHABLE_KEY || 'pk_test_51U5IIOP4CdTODxXhkTAL1UuG4TaF13mRILXYjzDCp2dKH9dE63iAmQbinoSXM50BfyJGa665uhdFtRRIfq1z4B8300I62rgUnc');
+  const stripeKey = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY;
 
   return (
     <>
@@ -134,8 +132,9 @@ function SeatsPrice({ selectedSeats, ticketPrice, showId, showDetails, getSeatLa
       )}
 
       {!ticketData && selectedSeats && selectedSeats.length > 0 && (
-        <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8 select-none">
-          <div className="relative overflow-hidden rounded-3xl bg-white border border-slate-200 py-5 sm:py-6 px-6 sm:px-10 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-2 pb-6 select-none">
+          <div className="relative overflow-hidden rounded-3xl bg-white border border-slate-200 py-4 sm:py-5 px-6 sm:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+
             <div className="space-y-1 text-center sm:text-left">
               <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
                 Selected Seats ({selectedSeats.length}/6)

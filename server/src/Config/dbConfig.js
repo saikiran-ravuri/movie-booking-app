@@ -3,7 +3,8 @@ const dns = require('dns');
 
 dns.setServers(['8.8.8.8', '8.8.4.4']);
 
-mongoose.connect(process.env.db_url);
+mongoose.connect(process.env.DB_URL);
+
 
 const connection = mongoose.connection;
 

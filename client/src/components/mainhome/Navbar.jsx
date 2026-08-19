@@ -139,7 +139,7 @@ function Navbar({ username = 'User' }) {
       <div className="flex items-center gap-2 sm:gap-3 shrink-0">
         <Link
           to="/main-home"
-          className="px-2.5 py-1 text-xs font-bold text-slate-950 hover:text-slate-700 transition-colors cursor-pointer"
+          className="px-3 py-1.5 rounded-xl bg-white border border-slate-300 hover:border-slate-600 hover:bg-slate-50 text-slate-950 text-xs font-bold transition-colors cursor-pointer"
         >
           Home
         </Link>
@@ -148,31 +148,36 @@ function Navbar({ username = 'User' }) {
           <button
             type="button"
             onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-slate-200 hover:border-slate-300 transition-colors text-xs font-bold text-slate-950 cursor-pointer"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white border border-slate-300 hover:border-slate-600 hover:bg-slate-50 text-slate-950 text-xs font-bold transition-colors cursor-pointer"
           >
-            <User className="w-4 h-4 text-slate-700" />
+            <User className="w-3.5 h-3.5 text-slate-700" />
             <span>Hi, {userName}</span>
           </button>
 
           {isDropdownOpen && (
-            <div className="absolute right-0 mt-2 w-36 bg-white border border-slate-200 rounded-xl p-1 z-50 animate-in fade-in duration-150 text-left shadow-md">
+            <div className="absolute right-0 mt-2 w-36 bg-white border border-slate-200 rounded-2xl p-1.5 z-50 animate-in fade-in duration-150 text-left shadow-lg space-y-1">
               <Link
                 to="/my-bookings"
                 onClick={() => setIsDropdownOpen(false)}
-                className="w-full block px-3 py-2 text-xs font-bold text-slate-800 hover:bg-slate-50 transition-colors rounded-lg cursor-pointer text-left"
+                className="w-full block px-3 py-2 text-xs font-bold text-slate-800 hover:text-slate-950 hover:bg-slate-50 rounded-xl transition-colors cursor-pointer text-left"
               >
                 My Bookings
               </Link>
-              <div className="my-1 border-t border-slate-100" />
+              <div className="border-t border-slate-100" />
               <button
                 type="button"
                 onClick={handleLogout}
-                className="w-full block px-3 py-2 text-xs font-bold text-red-600 hover:bg-red-50 transition-colors rounded-lg cursor-pointer text-left"
+                className="w-full block px-3 py-2 text-xs font-bold text-slate-800 hover:text-slate-950 hover:bg-slate-50 rounded-xl transition-colors cursor-pointer text-left"
               >
                 Logout
               </button>
             </div>
           )}
+
+
+
+
+
         </div>
       </div>
     </header>
