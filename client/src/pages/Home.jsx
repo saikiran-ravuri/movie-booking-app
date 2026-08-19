@@ -14,12 +14,12 @@ function Home() {
   return (
     <div className="min-h-screen bg-slate-50 text-slate-950 font-sans flex flex-col items-center justify-center p-[clamp(1rem,3vw,2rem)] text-center select-none">
       <div className="space-y-[clamp(0.75rem,1.8vw,1.5rem)] max-w-lg flex flex-col items-center">
-        <div className="relative w-[clamp(3.5rem,5vw,4.5rem)] h-[clamp(3.5rem,5vw,4.5rem)] rounded-2xl bg-slate-950 border border-slate-800 flex items-center justify-center text-white shadow-md">
-          <Clapperboard className="w-[clamp(1.75rem,2.5vw,2.25rem)] h-[clamp(1.75rem,2.5vw,2.25rem)] text-white stroke-[1.75]" />
-          <Film className="w-[clamp(0.75rem,1vw,1rem)] h-[clamp(0.75rem,1vw,1rem)] text-white absolute bottom-2 right-2 opacity-80" />
+        <div className="relative w-[clamp(2.75rem,4vw,3.75rem)] h-[clamp(2.75rem,4vw,3.75rem)] rounded-2xl bg-slate-950 border border-slate-800 flex items-center justify-center text-white shadow-md">
+          <Clapperboard className="w-[clamp(1.35rem,2vw,1.85rem)] h-[clamp(1.35rem,2vw,1.85rem)] text-white stroke-[1.75]" />
+          <Film className="w-[clamp(0.6rem,0.85vw,0.85rem)] h-[clamp(0.6rem,0.85vw,0.85rem)] text-white absolute bottom-1.5 right-1.5 opacity-80" />
         </div>
 
-        <h1 className="text-[clamp(1.5rem,3.5vw,2.5rem)] font-extrabold tracking-tight text-slate-950 leading-tight">
+        <h1 className="text-[clamp(1.25rem,2.8vw,2.125rem)] font-extrabold tracking-tight text-slate-950 leading-tight">
           Movie Booking Application
         </h1>
 

@@ -158,7 +158,7 @@ function ResetPassword({ isModal = false, onCloseModal, onSwitchToLogin }) {
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-950 font-sans flex items-center justify-center p-6 select-none">
-      <div className="relative overflow-hidden w-full max-w-[clamp(280px,90vw,440px)] bg-white border border-slate-200 rounded-3xl p-[clamp(1.25rem,2.5vw,2rem)] shadow-2xl text-left">
+      <div className="relative overflow-hidden w-full max-w-[clamp(250px,85vw,360px)] bg-white border border-slate-200 rounded-3xl p-[clamp(1rem,2vw,1.5rem)] shadow-2xl text-left">
         {formContent}
       </div>
     </div>

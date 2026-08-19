@@ -1,7 +1,7 @@
 import React from 'react';
 import { Routes, Route, Navigate, Outlet } from 'react-router-dom';
-import Home from '../pages/home';
-import MainHome from '../pages/mainHome';
+import Home from '../pages/Home';
+import MainHome from '../pages/MainHome';
 import MovieDetails from '../pages/movieDetails';
 import ShowSeat from '../pages/showSeat';
 import MyBookings from '../components/MyBookings';
